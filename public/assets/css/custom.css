@@ -1,0 +1,11 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.hero h1 {
+    color: #1a1a1a;
+}
+
+form input::placeholder {
+    color: #999;
+}

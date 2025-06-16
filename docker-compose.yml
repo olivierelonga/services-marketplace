@@ -1,0 +1,48 @@
+version: "3.8"  # Use Docker Compose file format version 3.8
+
+services:
+  app:
+    image: php:8.2-fpm  # PHP container using FastCGI Process Manager
+    container_name: services-app  # Name of the container
+    volumes:
+      - .:/var/www/html  # Mount current dir to container's web root
+    working_dir: /var/www/html  # Set default working directory inside the container
+    depends_on:
+      - db  # Wait until the database container is ready before starting
+    networks:
+      - laravel  # Connect this service to the 'laravel' network
+
+  webserver:
+    image: nginx:alpine  # Use lightweight Nginx image
+    container_name: services-nginx  # Name of the Nginx container
+    ports:
+      - "8000:80"  # Map host port 8000 to container port 80
+    volumes:
+      - .:/var/www/html  # Mount Laravel app directory
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d  # Mount custom Nginx config
+    depends_on:
+      - app  # Wait for the PHP app container
+    networks:
+      - laravel  # Connect to the same network
+
+  db:
+    image: mysql:8.0  # MySQL version 8 database
+    container_name: services-db  # Name of the database container
+    environment:
+      MYSQL_DATABASE: laravel  # Default database name
+      MYSQL_ROOT_PASSWORD: root  # Root password
+      MYSQL_PASSWORD: root  # Password for user below
+      MYSQL_USER: laravel  # Create this DB user
+    ports:
+      - "3306:3306"  # Map default MySQL port
+    volumes:
+      - dbdata:/var/lib/mysql  # Persist data to named volume
+    networks:
+      - laravel  # Same custom network
+
+volumes:
+  dbdata:  # Declare a named volume for MySQL data persistence
+
+networks:
+  laravel:
+    driver: bridge  # Use bridge networking (default)
