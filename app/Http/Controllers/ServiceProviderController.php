@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Service;
+use App\Models\User;
+use Hash;
 
 use Illuminate\Http\Request;
 
@@ -12,31 +15,48 @@ class ServiceProviderController extends Controller
         return view('serviceProviders.register');
     }
 
-    public function register(Request $request)
+    public function showForm()
     {
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
-            'phone'    => 'required',
-            'bio'      => 'nullable|string',
-            'services' => 'required|array'
+        $services = Service::all();
+        return view('providers.register', compact('services'));
+    }
+
+
+    public function store(Request $request)
+    {
+        //exit("exit");
+        $validated = $request->validate([
+            'first_name'          => 'required|string|max:255',
+            'last_name'           => 'required|string|max:255',
+            'email'               => 'required|email|unique:users,email',
+            'password'            => 'required|min:6|confirmed',
+            'phone'               => 'required',
+            'bio'                 => 'nullable|string',
+            'years_of_experience' => 'nullable|integer|min:0|max:100',
+            'location'            => 'nullable|string',
+            'services'            => 'required|array',
+            'date_of_birth'       => 'required|date|before:today',
+            'gender'              => 'nullable|in:male,female,other',
         ]);
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'phone'    => $request->phone,
-            'bio'      => $request->bio,
-            'role'     => 'provider',
+            'first_name'          => $validated['first_name'],
+            'last_name'           => $validated['last_name'],
+            'email'               => $validated['email'],
+            'password'            => Hash::make($validated['password']),
+            'phone'               => $validated['phone'],
+            'bio'                 => $validated['bio'],
+            'years_of_experience' => $validated['years_of_experience'],
+            'location'            => $validated['location'],
+            'date_of_birth'       => $validated['date_of_birth'],
+            'gender'              => $validated['gender'],
+            'role'                => 'provider',
         ]);
 
-        // Attach services later when services table is ready
-        // $user->services()->attach($request->services);
+        $user->services()->attach($validated['services']);
 
         auth()->login($user);
 
-        return redirect()->route('dashboard'); // or wherever
+        return redirect()->route('dashboard'); // or confirmation
     }
 }

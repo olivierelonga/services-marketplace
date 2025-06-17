@@ -21,6 +21,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'first_name',
+        'last_name',
+        'password',
+        'phone',
+        'bio',
+        'years_of_experience',
+        'location',
+        'date_of_birth',
+        'gender',
+        'role'
     ];
 
     /**
@@ -44,5 +54,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class);
     }
 }
