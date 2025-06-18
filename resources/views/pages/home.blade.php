@@ -5,8 +5,8 @@
     <div class="container">
         <a class="navbar-brand fw-bold text-primary" href="#">yelp</a>
         <div class="ms-auto">
-            <a href="#" class="btn btn-outline-primary me-2">Login</a>
-            <a href="#" class="btn btn-primary">Join as a Professional</a>
+            <a href="{{ route('login') }}" class="btn btn-outline-primary me-2">Login</a>
+            <a href="{{ route('provider.form') }}" class="btn btn-primary">Join as a Professional</a>
         </div>
     </div>
 </nav>
