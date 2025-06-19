@@ -5,6 +5,8 @@ use App\Http\Controllers\ServiceProviderController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 /*
 Route::get('/', function () {
@@ -13,9 +15,6 @@ Route::get('/', function () {
 the above can can shorten like this:
 */
 Route::view('/', 'pages.home')->name('home');
-
-// Route::get('/register/ServiceProvider', [ServiceProviderController::class, 'showRegistrationForm'])->name('provider.register');
-// Route::post('/register/ServiceProvider', [ServiceProviderController::class, 'register']);
 
 Route::get('/register/provider', [ServiceProviderController::class, 'showForm'])->name('provider.form');
 Route::post('/register/provider', [ServiceProviderController::class, 'store'])->name('provider.store');
@@ -40,3 +39,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
+
+
+# password reset routes
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');

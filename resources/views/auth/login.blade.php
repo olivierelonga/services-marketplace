@@ -15,7 +15,7 @@
 
         <div class="mb-3">
             <label>Email address</label>
-            <input type="email" name="email" class="form-control" required autofocus>
+            <input type="email" name="email" class="form-control" required autofocus value="{{ old('email') }}">
         </div>
 
         <div class="mb-3">
@@ -24,6 +24,11 @@
         </div>
 
         <button type="submit" class="btn btn-primary w-100">Login</button>
+
+        {{-- Forgot Password Link --}}
+        <div class="mt-3 text-center">
+            <a href="{{ route('password.request') }}" class="text-decoration-none">Forgot your password?</a>
+        </div>
     </form>
 </div>
 @endsection
