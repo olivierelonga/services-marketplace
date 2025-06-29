@@ -10,12 +10,19 @@
 
     <!-- Custom CSS -->
     <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet">
+
+            <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    
 </head>
-<body>
+<body style="background: rgb(238 238 238)">
     @yield('content')
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    
     <!-- Custom JS -->
     <script src="{{ asset('assets/js/app.js') }}"></script>
 </body>

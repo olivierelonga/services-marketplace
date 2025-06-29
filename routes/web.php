@@ -1,12 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\View;
 use App\Http\Controllers\ServiceProviderController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\MessageController;
 
 /*
 Route::get('/', function () {
@@ -38,6 +40,7 @@ Route::post('/logout', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
 });
 
 
@@ -46,3 +49,20 @@ Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkReques
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+Route::middleware(['auth'])->post('/fake-pay', function () {
+    $user = Auth::user();
+    $user->is_premium = true;
+    $user->premium_expires_at = now()->addMonths(1); // or addMonths(3)
+    $user->save();
+
+    return redirect()->back()->with('success', 'Premium activated for 1 month!');
+})->name('fake.pay');
+
+
+
+// Show the reply form
+Route::get('/messages/{id}/reply', [MessageController::class, 'reply'])->name('messages.reply');
+
+// Handle the reply submission
+Route::post('/messages/{id}/reply', [MessageController::class, 'sendReply'])->name('messages.sendReply');
