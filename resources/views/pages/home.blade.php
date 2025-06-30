@@ -4,9 +4,21 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
     <div class="container">
         <a class="navbar-brand fw-bold text-primary" href="{{ url('/') }}">yelp</a>
-        <div class="ms-auto">
-            <a href="{{ route('login') }}" class="btn btn-outline-primary me-2">Login</a>
-            <a href="{{ route('provider.form') }}" class="btn btn-primary">Join as a Professional</a>
+
+        <div class="ms-auto d-flex align-items-center gap-2">
+            @auth
+                <a href="{{ route('messages.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-envelope-fill me-1"></i> Messages
+                </a>
+                <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-person-circle me-1"></i> Profile
+                </a>
+            @endauth
+
+            @guest
+                <a href="{{ route('login') }}" class="btn btn-outline-primary">Login</a>
+                <a href="{{ route('provider.form') }}" class="btn btn-primary">Join as a Professional</a>
+            @endguest
         </div>
     </div>
 </nav>

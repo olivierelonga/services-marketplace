@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="{{ url('/') }}">yelp</a>
+    </div>
+</nav>
 <div class="container mt-5">
     <div class="card shadow rounded-4">
         <div class="card-header bg-primary text-white">

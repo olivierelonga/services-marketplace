@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<?php $unreadCount =3 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
     <div class="container">
@@ -9,8 +8,8 @@
 
         <div class="ms-auto d-flex align-items-center gap-2">
             {{-- Messages Button --}}
-            <a href="{{ route('messages.index') }}" class="btn btn-outline-secondary position-relative">
-                <i class="fa fa-address-book-o" aria-hidden="true"></i>
+            <a href="{{ route('messages.index') }}" class="position-relative">
+                <i class="bi bi-envelope-fill me-1" aria-hidden="true"></i>
 
                 @if($unreadCount > 0)
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">

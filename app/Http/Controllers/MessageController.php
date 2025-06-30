@@ -62,13 +62,21 @@ class MessageController extends Controller
             ['path' => url()->current()]
         );
 
-        return view('messages.index', ['messages' => $paginator]);
+        $unreadCount = Message::where('receiver_id', $userId)->where('is_read', false)->count();
+
+        return view('messages.index', ['messages' => $paginator, 'unreadCount' => $unreadCount]);
     }
 
     public function reply($id)
     {
         #get full_name and from users table where id sender_id = $ 
         $message = Message::findOrFail($id);
+
+        if (!$message->is_read) {
+            $message->is_read = true;
+            $message->save();
+        }
+
         return view('messages.reply', compact('message'));
     }
 

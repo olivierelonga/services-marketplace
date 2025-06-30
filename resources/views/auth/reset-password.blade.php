@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="{{ url('/') }}">yelp</a>
+    </div>
+</nav>
+
 <div class="container mt-5">
     <h3 class="text-center">Reset Password</h3>
     
