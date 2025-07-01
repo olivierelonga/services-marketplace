@@ -11,4 +11,11 @@ class Service extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    
+    public function category()
+    {
+        return $this->belongsTo(ServiceCategory::class, 'service_category_id');
+    }
+
 }
