@@ -30,9 +30,11 @@
 
         <div class="row justify-content-center mt-4">
             <div class="col-md-8">
-                <form class="d-flex shadow rounded-4 overflow-hidden bg-white p-2">
-                    <input type="text" class="form-control me-2 border-0" placeholder="What service are you looking for?">
-                    <input type="text" class="form-control me-2 border-0" placeholder="Postal code">
+                <form method="GET" action="{{ route('search') }}" class="d-flex flex-wrap gap-2 bg-white shadow rounded-4 p-3">
+                    <input type="text" name="q" class="form-control border-0" placeholder="What service are you looking for?" required>
+                    <input type="text" name="postal_code" class="form-control border-0" placeholder="Postal code">
+                    <input type="number" name="hourly_rate" class="form-control border-0" placeholder="Max hourly rate">
+                    <input type="number" name="experience" class="form-control border-0" placeholder="Min years of experience">
                     <button class="btn btn-primary px-4">Search</button>
                 </form>
                 <small class="text-muted d-block mt-2">

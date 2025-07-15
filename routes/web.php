@@ -69,4 +69,7 @@ Route::get('/messages/{id}/reply', [MessageController::class, 'reply'])->name('m
 Route::post('/messages/{id}/reply', [MessageController::class, 'sendReply'])->name('messages.sendReply');
 
 Route::get('/service-suggestions', [ServiceSearchController::class, 'suggest']);
-Route::get('/services/providers', [ServiceProviderController::class, 'showProviders']);
+// Route::get('/services/providers', [ServiceProviderController::class, 'showProviders']);
+
+
+//Route::get('/search', [ServiceSearchController::class, 'index'])->name('search');
