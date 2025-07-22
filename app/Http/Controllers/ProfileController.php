@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
@@ -44,5 +45,15 @@ class ProfileController extends Controller
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Profile updated successfully.');
+    }
+
+    public function show(User $user)
+    {
+        // Make sure only providers can be viewed
+        if (! $user->is_provider) {
+            abort(404);
+        }
+
+        return view('profile.show', compact('user'));
     }
 }

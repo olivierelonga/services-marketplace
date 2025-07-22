@@ -9,7 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\MessageController;
-use App\Http\Controllers\ServiceSearchController;
+use App\Http\Controllers\Api\ServiceSearchController;
 
 /*
 Route::get('/', function () {
@@ -72,4 +72,6 @@ Route::get('/service-suggestions', [ServiceSearchController::class, 'suggest']);
 // Route::get('/services/providers', [ServiceProviderController::class, 'showProviders']);
 
 
-//Route::get('/search', [ServiceSearchController::class, 'index'])->name('search');
+Route::get('/search', [ServiceSearchController::class, 'index'])->name('search');
+
+Route::get('/profile/{user}', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.view');

@@ -50,15 +50,15 @@ class ServiceSearchController extends Controller
         $postal = $request->input('postal_code');
 
         $providers = User::where('is_provider', true)
-            ->when($query, function ($q) use ($query) {
-                $q->whereHas('services', function ($s) use ($query) {
-                    $s->where('name', 'like', '%' . $query . '%');
-                });
-            })
-            ->when($rate, fn($q) => $q->where('hourly_rate', '<=', $rate))
-            ->when($experience, fn($q) => $q->where('years_of_experience', '>=', $experience))
-            ->when($postal, fn($q) => $q->where('postal_code', $postal))
-            ->with('services')
+            // ->when($query, function ($q) use ($query) {
+            //     $q->whereHas('services', function ($s) use ($query) {
+            //         $s->where('name', 'like', '%' . $query . '%');
+            //     });
+            // })
+            // ->when($rate, fn($q) => $q->where('hourly_rate', '<=', $rate))
+            // ->when($experience, fn($q) => $q->where('years_of_experience', '>=', $experience))
+            // ->when($postal, fn($q) => $q->where('location', $postal))
+            // ->with('services')
             ->get();
 
         return view('search.results', compact('providers'));
