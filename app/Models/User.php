@@ -30,7 +30,8 @@ class User extends Authenticatable
         'location',
         'date_of_birth',
         'gender',
-        'role'
+        'role',
+        'hourly_rate'
     ];
 
     /**

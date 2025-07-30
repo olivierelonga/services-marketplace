@@ -29,6 +29,7 @@ class ProfileController extends Controller
             'date_of_birth'       => 'required|date|before:today',
             'gender'              => 'nullable|in:male,female,other',
             'password'            => 'nullable|string|min:6|confirmed',
+            'hourly_rate'         => 'nullable',
         ]);
 
         $user->update([
@@ -40,8 +41,9 @@ class ProfileController extends Controller
             'years_of_experience' => $validated['years_of_experience'],
             'date_of_birth'       => $validated['date_of_birth'],
             'gender'              => $validated['gender'],
-            'password'            => $validated['password']
-                ? Hash::make($validated['password']) : $user->password,
+            'password'            => $validated['password'] ? Hash::make($validated['password']) : $user->password,
+            'hourly_rate'         => $validated['hourly_rate'],
+            'is_provider'         => $validated['is_provider'],
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Profile updated successfully.');

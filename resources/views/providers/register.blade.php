@@ -64,9 +64,14 @@
                         <input type="text" name="phone" class="form-control" required>
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label>Location</label>
                         <input type="text" name="location" class="form-control">
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label>Hourly Rate (R)</label>
+                        <input type="number" name="hourly_rate" class="form-control">
                     </div>
 
                     <div class="col-md-6 mb-3">

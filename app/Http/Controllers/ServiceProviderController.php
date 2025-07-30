@@ -37,6 +37,7 @@ class ServiceProviderController extends Controller
             'services'            => 'required|array',
             'date_of_birth'       => 'required|date|before:today',
             'gender'              => 'nullable|in:male,female,other',
+            'hourly_rate'         => 'required',
         ]);
 
         $user = User::create([
@@ -51,6 +52,8 @@ class ServiceProviderController extends Controller
             'date_of_birth'       => $validated['date_of_birth'],
             'gender'              => $validated['gender'],
             'role'                => 'provider',
+            'is_provider'         => '1',
+            'hourly_rate'         => $validated['hourly_rate'],
         ]);
 
         $user->services()->attach($validated['services']);

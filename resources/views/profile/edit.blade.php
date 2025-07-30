@@ -40,9 +40,14 @@
                 <input type="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" required>
             </div>
 
-            <div class="col-md-6 mb-3">
+            <div class="col-md-3 mb-3">
                 <label>Location</label>
                 <input type="text" name="location" class="form-control" value="{{ old('location', $user->location) }}">
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label>Hourly Rate</label>
+                <input type="number" name="hourly_rate" class="form-control" value="{{ old('hourly_rate', $user->hourly_rate) }}">
             </div>
 
             <div class="col-md-6 mb-3">
