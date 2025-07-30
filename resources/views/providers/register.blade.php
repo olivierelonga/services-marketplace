@@ -243,13 +243,15 @@
                                 </button>
                             </div>
                         </form>
+
+                        <!-- Footer Text -->
+                        <div class="text-center mt-4">
+                            <p class="text-muted mb-0">Already have an account? <a href="{{ route('login') }}" class="text-primary fw-semibold text-decoration-none">Sign in here</a></p>
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- Footer Text -->
-                <div class="text-center mt-4">
-                    <p class="text-white-50 mb-0">Already have an account? <a href="#" class="text-white fw-semibold">Sign in here</a></p>
-                </div>
             </div>
         </div>
     </div>
