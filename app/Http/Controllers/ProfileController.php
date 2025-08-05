@@ -24,6 +24,7 @@ class ProfileController extends Controller
             'last_name'           => 'required|string|max:255',
             'email'               => 'required|email|unique:users,email,' . $user->id,
             'location'            => 'nullable|string',
+            'phone'               => 'required',
             'bio'                 => 'nullable|string',
             'years_of_experience' => 'nullable|integer|min:0|max:100',
             'date_of_birth'       => 'required|date|before:today',
@@ -31,6 +32,16 @@ class ProfileController extends Controller
             'password'            => 'nullable|string|min:6|confirmed',
             'hourly_rate'         => 'nullable',
         ]);
+
+        $whatsappNumb = $request->input('whatsapp_number');
+        if ($request->same_whatsapp_number) {
+            $whatsappNumb = $validated['phone'];
+        } 
+
+        $has_whatsapp = false;
+        if ($request->same_whatsapp_number == 'on' || !empty($request->input('whatsapp_number'))) {
+            $has_whatsapp = true;
+        }
 
         $user->update([
             'first_name'          => $validated['first_name'],
@@ -44,6 +55,8 @@ class ProfileController extends Controller
             'password'            => $validated['password'] ? Hash::make($validated['password']) : $user->password,
             'hourly_rate'         => $validated['hourly_rate'],
             'is_provider'         => $validated['is_provider'],
+            'whatsapp_number'     => $whatsappNumb,
+            'has_whatsapp'       => $has_whatsapp,
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Profile updated successfully.');

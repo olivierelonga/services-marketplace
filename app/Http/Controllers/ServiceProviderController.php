@@ -38,7 +38,21 @@ class ServiceProviderController extends Controller
             'date_of_birth'       => 'required|date|before:today',
             'gender'              => 'nullable|in:male,female,other',
             'hourly_rate'         => 'required',
+            'city'                => 'required|string|max:255',
+            //'province'            => 'required|string|max:255',
+            //'postal_code'         => 'required|string|max:20',
         ]);
+
+        $whatsappNumb = $request->input('whatsapp_number');
+        if ($request->same_whatsapp_number) {
+            $whatsappNumb = $validated['phone'];
+        } 
+
+        $has_whatsapp = false;
+        if ($request->same_whatsapp_number == 'on' || !empty($request->input('whatsapp_number'))) {
+            $has_whatsapp = true;
+        } 
+
 
         $user = User::create([
             'first_name'          => $validated['first_name'],
@@ -54,6 +68,11 @@ class ServiceProviderController extends Controller
             'role'                => 'provider',
             'is_provider'         => '1',
             'hourly_rate'         => $validated['hourly_rate'],
+            'city'                => $validated['city'],
+            //'province'            => $validated['province'],
+            //'postal_code'         => $validated['postal_code'],
+            'whatsapp_number'     => $whatsappNumb,
+            'has_whatsapp'        => $has_whatsapp,
         ]);
 
         $user->services()->attach($validated['services']);

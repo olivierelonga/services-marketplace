@@ -31,7 +31,10 @@ class User extends Authenticatable
         'date_of_birth',
         'gender',
         'role',
-        'hourly_rate'
+        'hourly_rate',
+        'is_provider',
+        'whatsapp_number',
+        'has_whatsapp',
     ];
 
     /**

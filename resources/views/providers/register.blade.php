@@ -121,18 +121,52 @@
                                                 <i class="fas fa-phone me-2"></i>Phone Number
                                             </label>
                                         </div>
+                                            <div style="padding-left: 90px; padding-top: 10px">
+                                                 <input class="form-check-input" type="checkbox" name="same_whatsapp_number" 
+                                                        id="same_whatsapp_number" checked {{ old('same_whatsapp_number', true) ? 'checked' : '' }}>
+                                                <label class="form-check-label fw-medium" for="same_whatsapp_number">
+                                                    <i class="fab fa-whatsapp text-success me-2"></i>Use the same number for WhatsApp
+                                                </label> 
+                                            </div>
+                                      
+
                                     </div>
+                                    
+                                    <div class="col-md-6" id="whatsapp_field" style="display: none;">
+                                        <div class="form-floating">
+                                            <input type="text" name="whatsapp_number" class="form-control border-2 rounded-4" id="whatsapp_number" placeholder="WhatsApp Number (Optional)" value="{{ old('whatsapp_number') }}" style="padding-top: 1.625rem; padding-bottom: .625rem;">
+                                            <label for="whatsapp_number" class="text-muted">
+                                                <i class="fab fa-whatsapp me-2"></i>WhatsApp Number (Optional)
+                                            </label>
+                                        </div>
+                                    </div>
+
 
                                     <div class="col-12">
                                         <div class="form-floating">
-                                            <input type="text" name="location" class="form-control border-2 rounded-4" 
-                                                   id="location" placeholder="Location" value="{{ old('location') }}"
-                                                   style="padding-top: 1.625rem; padding-bottom: .625rem;">
+                                            <input type="text" name="location" id="autocomplete" class="form-control border-2 rounded-4" 
+                                                placeholder="Start typing your address..." value="{{ old('location') }}"
+                                                style="padding-top: 1.625rem; padding-bottom: .625rem;">
+                                            <label for="autocomplete" class="text-muted">
+                                                <i class="fas fa-map-marker-alt me-2"></i>Location / Address
+                                            </label>
+                                        </div>
+
+                                        {{-- Hidden fields to capture city, province, postal code --}}
+                                        <input type="hidden" name="city" id="city" value="{{ old('city') }}">
+                                        <input type="hidden" name="province" id="province" value="{{ old('province') }}">
+                                        <input type="hidden" name="postal_code" id="postal_code" value="{{ old('postal_code') }}">
+                                    </div>
+
+
+                                    {{-- <div class="col-12">
+                                        <div class="form-floating">
+                                            <input type="text" name="location" class="form-control border-2 rounded-4" id="location" placeholder="Location" value="{{ old('location') }}" style="padding-top: 1.625rem; padding-bottom: .625rem;">
                                             <label for="location" class="text-muted">
                                                 <i class="fas fa-map-marker-alt me-2"></i>Location / City
                                             </label>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
 
@@ -152,7 +186,7 @@
                                                    id="hourly_rate" placeholder="Hourly Rate" value="{{ old('hourly_rate') }}"
                                                    style="padding-top: 1.625rem; padding-bottom: .625rem;">
                                             <label for="hourly_rate" class="text-muted">
-                                                <i class="fas fa-dollar-sign me-2"></i>Hourly Rate (R)
+                                                <i class="fas fa-money-bill me-2"></i>Hourly Rate (R)
                                             </label>
                                         </div>
                                     </div>
@@ -211,7 +245,7 @@
                                 <div class="row g-4">
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="password" name="password" class="form-control border-2 rounded-4" 
+                                            <input type="password" name="password" class="form-control border-2 rounded-4" required
                                                    id="password" placeholder="Password" required
                                                    style="padding-top: 1.625rem; padding-bottom: .625rem;">
                                             <label for="password" class="text-muted">
@@ -287,5 +321,70 @@
         }
     }
 </style>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places"></script>
+<script>
+    function initAutocomplete() {
+        const autocompleteInput = document.getElementById('autocomplete');
+        const autocomplete = new google.maps.places.Autocomplete(autocompleteInput, {
+            types: ['geocode'],
+            componentRestrictions: { country: 'za' }
+        });
+
+        autocomplete.addListener('place_changed', function () {
+            const place = autocomplete.getPlace();
+            let city = '', province = '', postalCode = '';
+
+            if (!place.address_components) return;
+
+            for (const component of place.address_components) {
+                const types = component.types;
+                if (types.includes('locality')) city = component.long_name;
+                if (types.includes('administrative_area_level_1')) province = component.long_name;
+                if (types.includes('postal_code')) postalCode = component.long_name;
+            }
+
+            document.getElementById('city').value = city;
+            document.getElementById('province').value = province;
+            document.getElementById('postal_code').value = postalCode;
+        });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initAutocomplete);
+
+
+    
+    // WhatsApp number toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        var addressInput = document.getElementById('address_search');
+        if (addressInput) {
+            addressInput.addEventListener('focus', geolocate);
+        }
+        
+        // WhatsApp number checkbox functionality
+        const sameWhatsAppCheckbox = document.getElementById('same_whatsapp_number');
+        const whatsappField = document.getElementById('whatsapp_field');
+        const whatsappInput = document.getElementById('whatsapp_number');
+        
+        function toggleWhatsAppField() {
+            if (sameWhatsAppCheckbox.checked) {
+                whatsappField.style.display = 'none';
+                whatsappInput.removeAttribute('required');
+                whatsappInput.value = ''; // Clear the field when hidden
+            } else {
+                whatsappField.style.display = 'block';
+                whatsappInput.setAttribute('required', 'required');
+            }
+        }
+        
+        // Initialize the field state
+        toggleWhatsAppField();
+        
+        // Add event listener for checkbox changes
+        sameWhatsAppCheckbox.addEventListener('change', toggleWhatsAppField);
+    });
+</script>
+
 
 @endsection
