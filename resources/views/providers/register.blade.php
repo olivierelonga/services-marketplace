@@ -44,8 +44,7 @@
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="text" name="first_name" class="form-control border-2 rounded-4" 
-                                                   id="first_name" placeholder="First Name" required value="{{ old('first_name') }}" 
-                                                   style="padding-top: 1.625rem; padding-bottom: .625rem;">
+                                                   id="first_name" placeholder="First Name" required value="{{ old('first_name') }}" style="padding-top: 1.625rem; padding-bottom: .625rem;">
                                             <label for="first_name" class="text-muted">
                                                 <i class="fas fa-user me-2"></i>First Name
                                             </label>
@@ -76,8 +75,7 @@
 
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <select name="gender" class="form-select border-2 rounded-4" id="gender"
-                                                    style="padding-top: 1.625rem; padding-bottom: .625rem;">
+                                            <select name="gender" class="form-select border-2 rounded-4" id="gender" style="padding-top: 1.625rem; padding-bottom: .625rem;" required>
                                                 <option value="">Choose...</option>
                                                 <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
                                                 <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
@@ -182,9 +180,7 @@
                                 <div class="row g-4">
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="number" name="hourly_rate" class="form-control border-2 rounded-4" 
-                                                   id="hourly_rate" placeholder="Hourly Rate" value="{{ old('hourly_rate') }}"
-                                                   style="padding-top: 1.625rem; padding-bottom: .625rem;">
+                                            <input type="number" required name="hourly_rate" class="form-control border-2 rounded-4" id="hourly_rate" placeholder="Hourly Rate" value="{{ old('hourly_rate') }}" style="padding-top: 1.625rem; padding-bottom: .625rem;">
                                             <label for="hourly_rate" class="text-muted">
                                                 <i class="fas fa-money-bill me-2"></i>Hourly Rate (R)
                                             </label>
@@ -296,25 +292,88 @@
         border-color: #667eea;
         box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
     }
-    
+
+    .form-control.is-valid {
+        border-color: #28a745;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='m2.3 6.73.98-.68c.23-.16.42-.42.42-.42l2.05-2.05c.38-.38.38-1.02 0-1.4-.38-.38-1.02-.38-1.4 0L3.28 3.65c-.08.08-.2.08-.28 0L1.7 2.35c-.38-.38-1.02-.38-1.4 0-.38.38-.38 1.02 0 1.4l1.4 1.4c.4.4 1.02.4 1.4 0z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(.375em + .1875rem) center;
+        background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3e%3cpath fill='%23dc3545' d='M9.5 3.2l-.8-.8L6 5.1 3.3 2.4l-.8.8L5.1 6 2.4 8.7l.8.8L6 6.9l2.7 2.7.8-.8L6.9 6 9.5 3.2z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(.375em + .1875rem) center;
+        background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+    }
+
+    .form-select.is-valid {
+        border-color: #28a745;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 6 6 6-6'/%3e%3c/svg%3e"), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='m2.3 6.73.98-.68c.23-.16.42-.42.42-.42l2.05-2.05c.38-.38.38-1.02 0-1.4-.38-.38-1.02-.38-1.4 0L3.28 3.65c-.08.08-.2.08-.28 0L1.7 2.35c-.38-.38-1.02-.38-1.4 0-.38.38-.38 1.02 0 1.4l1.4 1.4c.4.4 1.02.4 1.4 0z'/%3e%3c/svg%3e");
+        background-position: right .75rem center, center right 2.25rem;
+        background-size: 16px 12px, calc(.75em + .375rem) calc(.75em + .375rem);
+    }
+
+    .form-select.is-invalid {
+        border-color: #dc3545;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 6 6 6-6'/%3e%3c/svg%3e"), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3e%3cpath fill='%23dc3545' d='M9.5 3.2l-.8-.8L6 5.1 3.3 2.4l-.8.8L5.1 6 2.4 8.7l.8.8L6 6.9l2.7 2.7.8-.8L6.9 6 9.5 3.2z'/%3e%3c/svg%3e");
+        background-position: right .75rem center, center right 2.25rem;
+        background-size: 16px 12px, calc(.75em + .375rem) calc(.75em + .375rem);
+    }
+
     .form-check-input:checked {
         background-color: #667eea;
         border-color: #667eea;
     }
-    
+
     .btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
     }
-    
+
     .card {
         transition: transform 0.3s ease;
     }
-    
+
     .form-floating > label {
         padding-left: 1rem;
     }
-    
+
+    /* Services container validation styling */
+    .border-danger {
+        border-color: #dc3545 !important;
+        animation: shake 0.5s ease-in-out;
+    }
+
+    .border-success {
+        border-color: #28a745 !important;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    /* Invalid feedback styling */
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #dc3545;
+    }
+
+    .valid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+        color: #28a745;
+    }
+
     @media (max-width: 768px) {
         .card-body {
             padding: 2rem !important;
@@ -325,65 +384,183 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places"></script>
 <script>
-    function initAutocomplete() {
-        const autocompleteInput = document.getElementById('autocomplete');
-        const autocomplete = new google.maps.places.Autocomplete(autocompleteInput, {
-            types: ['geocode'],
-            componentRestrictions: { country: 'za' }
-        });
+    // Add this to your existing script section or create a new one
 
-        autocomplete.addListener('place_changed', function () {
-            const place = autocomplete.getPlace();
-            let city = '', province = '', postalCode = '';
-
-            if (!place.address_components) return;
-
-            for (const component of place.address_components) {
-                const types = component.types;
-                if (types.includes('locality')) city = component.long_name;
-                if (types.includes('administrative_area_level_1')) province = component.long_name;
-                if (types.includes('postal_code')) postalCode = component.long_name;
-            }
-
-            document.getElementById('city').value = city;
-            document.getElementById('province').value = province;
-            document.getElementById('postal_code').value = postalCode;
-        });
-    }
-
-    google.maps.event.addDomListener(window, 'load', initAutocomplete);
-
-
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap form validation
+    const form = document.querySelector('.needs-validation');
+    const sameWhatsAppCheckbox = document.getElementById('same_whatsapp_number');
+    const whatsappField = document.getElementById('whatsapp_field');
+    const whatsappInput = document.getElementById('whatsapp_number');
     
-    // WhatsApp number toggle functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        var addressInput = document.getElementById('address_search');
-        if (addressInput) {
-            addressInput.addEventListener('focus', geolocate);
+    // WhatsApp field toggle functionality (FIXED)
+    function toggleWhatsAppField() {
+        if (sameWhatsAppCheckbox.checked) {
+            // Hide field and remove required when using same number
+            whatsappField.style.display = 'none';
+            whatsappInput.removeAttribute('required');
+            whatsappInput.value = '';
+        } else {
+            // Show field and make it optional (remove required)
+            whatsappField.style.display = 'block';
+            // Don't make it required - it's marked as optional in your label
+            // whatsappInput.setAttribute('required', 'required');
         }
-        
-        // WhatsApp number checkbox functionality
-        const sameWhatsAppCheckbox = document.getElementById('same_whatsapp_number');
-        const whatsappField = document.getElementById('whatsapp_field');
-        const whatsappInput = document.getElementById('whatsapp_number');
-        
-        function toggleWhatsAppField() {
-            if (sameWhatsAppCheckbox.checked) {
-                whatsappField.style.display = 'none';
-                whatsappInput.removeAttribute('required');
-                whatsappInput.value = ''; // Clear the field when hidden
+    }
+    
+    // Initialize WhatsApp field state
+    toggleWhatsAppField();
+    
+    // Add event listener for WhatsApp checkbox changes
+    if (sameWhatsAppCheckbox) {
+        sameWhatsAppCheckbox.addEventListener('change', toggleWhatsAppField);
+    }
+    
+    // Bootstrap form validation
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                // Scroll to first invalid field
+                const firstInvalidField = form.querySelector(':invalid');
+                if (firstInvalidField) {
+                    firstInvalidField.focus();
+                    firstInvalidField.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
+            }
+            
+            form.classList.add('was-validated');
+        }, false);
+    }
+    
+    // Custom validation for specific fields
+    const requiredFields = form.querySelectorAll('[required]');
+    requiredFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            if (field.checkValidity()) {
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
             } else {
-                whatsappField.style.display = 'block';
-                whatsappInput.setAttribute('required', 'required');
+                field.classList.remove('is-valid');
+                field.classList.add('is-invalid');
+            }
+        });
+        
+        field.addEventListener('input', function() {
+            if (field.classList.contains('was-validated')) {
+                if (field.checkValidity()) {
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                } else {
+                    field.classList.remove('is-valid');
+                    field.classList.add('is-invalid');
+                }
+            }
+        });
+    });
+    
+    // Services validation (at least one service must be selected)
+    const serviceCheckboxes = document.querySelectorAll('input[name="services[]"]');
+    const servicesContainer = document.querySelector('.border.border-2.rounded-4.p-3');
+    
+    function validateServices() {
+        const checkedServices = document.querySelectorAll('input[name="services[]"]:checked');
+        if (checkedServices.length === 0) {
+            servicesContainer.classList.add('border-danger');
+            return false;
+        } else {
+            servicesContainer.classList.remove('border-danger');
+            servicesContainer.classList.add('border-success');
+            return true;
+        }
+    }
+    
+    serviceCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', validateServices);
+    });
+    
+    // Add services validation to form submission
+    const originalSubmitHandler = form.onsubmit;
+    form.addEventListener('submit', function(event) {
+        if (!validateServices()) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Show error message for services
+            let servicesError = document.getElementById('services-error');
+            if (!servicesError) {
+                servicesError = document.createElement('div');
+                servicesError.id = 'services-error';
+                servicesError.className = 'text-danger mt-2';
+                servicesError.innerHTML = '<small><i class="fas fa-exclamation-triangle me-1"></i>Please select at least one service.</small>';
+                servicesContainer.parentNode.appendChild(servicesError);
+            }
+            
+            servicesContainer.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        } else {
+            const servicesError = document.getElementById('services-error');
+            if (servicesError) {
+                servicesError.remove();
             }
         }
-        
-        // Initialize the field state
-        toggleWhatsAppField();
-        
-        // Add event listener for checkbox changes
-        sameWhatsAppCheckbox.addEventListener('change', toggleWhatsAppField);
     });
+});
+
+// Google Maps Autocomplete (your existing code with slight improvements)
+function initAutocomplete() {
+    const autocompleteInput = document.getElementById('autocomplete');
+    
+    if (!autocompleteInput) return; // Guard clause
+    
+    const autocomplete = new google.maps.places.Autocomplete(autocompleteInput, {
+        types: ['geocode'],
+        componentRestrictions: { country: 'za' }
+    });
+
+    autocomplete.addListener('place_changed', function () {
+        const place = autocomplete.getPlace();
+        let city = '', province = '', postalCode = '';
+
+        if (!place.address_components) return;
+
+        for (const component of place.address_components) {
+            const types = component.types;
+            if (types.includes('locality') || types.includes('sublocality')) {
+                city = component.long_name;
+            }
+            if (types.includes('administrative_area_level_1')) {
+                province = component.long_name;
+            }
+            if (types.includes('postal_code')) {
+                postalCode = component.long_name;
+            }
+        }
+
+        document.getElementById('city').value = city;
+        document.getElementById('province').value = province;
+        document.getElementById('postal_code').value = postalCode;
+        
+        // Mark autocomplete field as valid when place is selected
+        autocompleteInput.classList.add('is-valid');
+        autocompleteInput.classList.remove('is-invalid');
+    });
+}
+
+// Initialize Google Maps when available
+if (typeof google !== 'undefined') {
+    google.maps.event.addDomListener(window, 'load', initAutocomplete);
+} else {
+    // Fallback if Google Maps fails to load
+    console.warn('Google Maps API not loaded');
+}
 </script>
 
 
