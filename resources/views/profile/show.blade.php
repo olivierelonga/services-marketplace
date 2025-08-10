@@ -154,7 +154,8 @@
                 <button class="btn btn-primary btn-lg px-4 py-3 rounded-4 fw-semibold">
                     <i class="fas fa-message me-2"></i>Contact Provider
                 </button>
-                <button class="btn btn-outline-light btn-lg px-4 py-3 rounded-4 fw-semibold">
+
+                <button class="btn btn-outline-light btn-lg px-4 py-3 rounded-4 fw-semibold share-prof">
                     <i class="fas fa-share me-2"></i>Share Profile
                 </button>
             </div>
@@ -168,6 +169,11 @@
         transition: all 0.3s ease;
     }
     
+    .share-prof{
+        background-color: white;
+        color: black;
+    }
+
     .card {
         transition: transform 0.3s ease;
     }
