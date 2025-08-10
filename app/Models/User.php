@@ -64,4 +64,44 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Service::class);
     }
+
+    /**
+     * Get testimonials written for this user
+     */
+    public function testimonials()
+    {
+        return $this->hasMany(Testimonial::class)->withAuthor()->latest();
+    }
+
+    /**
+     * Get testimonials written by this user
+     */
+    public function writtenTestimonials()
+    {
+        return $this->hasMany(Testimonial::class, 'author_id')->with('user')->latest();
+    }
+
+    /**
+     * Check if this user has written a testimonial for another user
+     */
+    public function hasWrittenTestimonialFor($userId)
+    {
+        return $this->writtenTestimonials()->where('user_id', $userId)->exists();
+    }
+
+    /**
+     * Get average rating from testimonials
+     */
+    public function getAverageRatingAttribute()
+    {
+        return $this->testimonials()->avg('rating');
+    }
+
+    /**
+     * Get total testimonials count
+     */
+    public function getTotalTestimonialsAttribute()
+    {
+        return $this->testimonials()->count();
+    }
 }

@@ -38,7 +38,7 @@ class ServiceProviderController extends Controller
             'date_of_birth'       => 'required|date|before:today',
             'gender'              => 'nullable|in:male,female,other',
             'hourly_rate'         => 'required',
-            'city'                => 'required|string|max:255',
+            //'city'                => 'required|string|max:255',
             //'province'            => 'required|string|max:255',
             //'postal_code'         => 'required|string|max:20',
         ]);
@@ -68,7 +68,7 @@ class ServiceProviderController extends Controller
             'role'                => 'provider',
             'is_provider'         => '1',
             'hourly_rate'         => $validated['hourly_rate'],
-            'city'                => $validated['city'],
+            //'city'                => $validated['city'],
             //'province'            => $validated['province'],
             //'postal_code'         => $validated['postal_code'],
             'whatsapp_number'     => $whatsappNumb,

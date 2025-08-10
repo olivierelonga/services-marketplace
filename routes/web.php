@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Api\ServiceSearchController;
+use App\Http\Controllers\TestimonialController;
 
 /*
 Route::get('/', function () {
@@ -75,3 +76,11 @@ Route::get('/service-suggestions', [ServiceSearchController::class, 'suggest']);
 Route::get('/search', [ServiceSearchController::class, 'index'])->name('search');
 
 Route::get('/profile/{user}', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.view');
+
+
+// Testimonial routes
+Route::middleware(['auth'])->group(function () {
+    Route::post('/users/{user}/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
+    Route::put('/users/{user}/testimonials/{testimonial}', [TestimonialController::class, 'update'])->name('testimonials.update');
+    Route::delete('/users/{user}/testimonials/{testimonial}', [TestimonialController::class, 'destroy'])->name('testimonials.destroy');
+});
