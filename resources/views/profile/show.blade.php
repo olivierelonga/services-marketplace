@@ -265,9 +265,79 @@
                     <i class="fas fa-message me-2"></i>Contact Provider
                 </button>
 
-                <button class="btn btn-outline-light btn-lg px-4 py-3 rounded-4 fw-semibold share-prof">
-                    <i class="fas fa-share me-2"></i>Share Profile
-                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light btn-lg px-4 py-3 rounded-4 fw-semibold share-prof dropdown-toggle" 
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-share me-2"></i>Share Profile
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius: 15px; min-width: 200px;">
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center py-2" onclick="copyProfileLink()">
+                                <i class="fas fa-link text-primary me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">Copy Link</div>
+                                    <small class="text-muted">Copy profile URL</small>
+                                </div>
+                            </button>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center py-2" onclick="shareToWhatsApp()">
+                                <i class="fab fa-whatsapp text-success me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">WhatsApp</div>
+                                    <small class="text-muted">Share via WhatsApp</small>
+                                </div>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center py-2" onclick="shareToTwitter()">
+                                <i class="fab fa-twitter text-info me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">Twitter</div>
+                                    <small class="text-muted">Share on Twitter</small>
+                                </div>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center py-2" onclick="shareToLinkedIn()">
+                                <i class="fab fa-linkedin text-primary me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">LinkedIn</div>
+                                    <small class="text-muted">Share on LinkedIn</small>
+                                </div>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center py-2" onclick="shareToFacebook()">
+                                <i class="fab fa-facebook text-primary me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">Facebook</div>
+                                    <small class="text-muted">Share on Facebook</small>
+                                </div>
+                            </button>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center py-2" onclick="shareViaEmail()">
+                                <i class="fas fa-envelope text-warning me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">Email</div>
+                                    <small class="text-muted">Share via email</small>
+                                </div>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center py-2" onclick="shareViaSMS()">
+                                <i class="fas fa-sms text-success me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">SMS</div>
+                                    <small class="text-muted">Share via text message</small>
+                                </div>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -387,6 +457,41 @@
         }
     }
     
+    /* Share toast animations */
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+    
+    /* Share dropdown styling */
+    .dropdown-menu {
+        padding: 0.5rem 0;
+    }
+    
+    .dropdown-item {
+        border-radius: 8px;
+        margin: 0 0.5rem;
+        transition: all 0.2s ease;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(2px);
+    }
+    
     @media (max-width: 768px) {
         .card-body {
             padding: 2rem !important;
@@ -457,6 +562,134 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 8000);
         }
     });
+    
+    // Profile sharing functionality
+    const profileUrl = window.location.href;
+    const profileTitle = `{{ $user->first_name }}'s Profile - Professional Service Provider`;
+    const profileDescription = `Check out {{ $user->first_name }}'s profile on Yelp. ${'{'}{{ $user->years_of_experience }}{'}'}+ years of experience, R{{'{'}}{{ $user->hourly_rate }}{'}'}}/hour. View services and testimonials.`;
+
+    // copy clipboard
+    window.copyProfileLink = function() {
+        navigator.clipboard.writeText(profileUrl).then(function() {
+            showShareToast('Profile link copied to clipboard!', 'success');
+        }).catch(function() {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = profileUrl;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showShareToast('Profile link copied to clipboard!', 'success');
+        });
+    };
+
+    // whatsApp
+    window.shareToWhatsApp = function() {
+        const text = encodeURIComponent(`${profileDescription}\n\n${profileUrl}`);
+        window.open(`https://wa.me/?text=${text}`, '_blank');
+    };
+
+    //twitter
+    window.shareToTwitter = function() {
+        const text = encodeURIComponent(profileDescription);
+        const url = encodeURIComponent(profileUrl);
+        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+    };
+
+    // linkedIn
+    window.shareToLinkedIn = function() {
+        const url = encodeURIComponent(profileUrl);
+        const title = encodeURIComponent(profileTitle);
+        const summary = encodeURIComponent(profileDescription);
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`, '_blank');
+    };
+
+    //FB
+    window.shareToFacebook = function() {
+        const url = encodeURIComponent(profileUrl);
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+    };
+
+    // email
+    window.shareViaEmail = function() {
+        const subject = encodeURIComponent(profileTitle);
+        const body = encodeURIComponent(`Hi!\n\nI wanted to share this service provider's profile with you:\n\n${profileDescription}\n\n${profileUrl}\n\nBest regards`);
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    };
+
+    //sms
+    window.shareViaSMS = function() {
+        const text = encodeURIComponent(`Check out ${profileTitle}: ${profileUrl}`);
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            window.location.href = `sms:?body=${text}`;
+        } else {
+            // For desktop, copy to clipboard as fallback
+            navigator.clipboard.writeText(`Check out ${profileTitle}: ${profileUrl}`).then(function() {
+                showShareToast('Message copied to clipboard! You can paste it in your messaging app.', 'info');
+            });
+        }
+    };
+
+    // Native Web Share API (for mobile devices that support it)
+    window.shareNative = function() {
+        if (navigator.share) {
+            navigator.share({
+                title: profileTitle,
+                text: profileDescription,
+                url: profileUrl
+            }).then(() => {
+                showShareToast('Profile shared successfully!', 'success');
+            }).catch(() => {
+                // Fallback to copy link
+                copyProfileLink();
+            });
+        } else {
+            copyProfileLink();
+        }
+    };
+
+    // Toast notification function
+    function showShareToast(message, type = 'success') {
+        // Remove existing toast if any
+        const existingToast = document.querySelector('.share-toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `share-toast alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} shadow-lg`;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            border-radius: 15px;
+            border: none;
+            animation: slideInRight 0.3s ease-out;
+        `;
+        
+        toast.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i>
+                ${message}
+            </div>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            toast.style.animation = 'slideOutRight 0.3s ease-out forwards';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.remove();
+                }
+            }, 300);
+        }, 3000);
+    }
 });
 </script>
 
