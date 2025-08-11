@@ -9,6 +9,7 @@ use App\Models\Message;
 use Illuminate\Support\Facades\Mail;
 use DB;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\User;
 
 
 class MessageController extends Controller
@@ -95,5 +96,28 @@ class MessageController extends Controller
         });
 
         return redirect()->route('messages.index')->with('success', 'Reply sent successfully.');
+    }
+
+    public function store(Request $request, User $user)
+    {
+        // Validate incoming request
+        $validated = $request->validate([
+            'contact_method' => 'required|in:email,phone',
+            'timeline' => 'required',
+            'message' => 'required|min:5',
+            'phone_number' => 'required_if:contact_method,phone',
+            'receiver_id' => 'required|exists:users,id',
+        ]);
+
+        $message = new Message();
+        $message->sender_id = auth()->id();
+        $message->receiver_id = $validated['receiver_id'];
+        $message->contact_method = $validated['contact_method'];
+        $message->timeline = $validated['timeline'];
+        $message->body = $validated['message'];
+        $message->phone_number = $validated['phone_number'] ?? null;
+        $message->save();
+
+        return redirect()->back()->with('success', 'Your message has been sent successfully! ' . $user->first_name . ' will get back to you soon.');
     }
 }

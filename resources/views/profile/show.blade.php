@@ -261,7 +261,8 @@
         <!-- Action Buttons -->
         <div class="text-center mt-5">
             <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-                <button class="btn btn-primary btn-lg px-4 py-3 rounded-4 fw-semibold">
+                <button class="btn btn-primary btn-lg px-4 py-3 rounded-4 fw-semibold" 
+                        data-bs-toggle="modal" data-bs-target="#contactProviderModal">
                     <i class="fas fa-message me-2"></i>Contact Provider
                 </button>
 
@@ -390,6 +391,213 @@
 @endif
 @endauth
 
+<!-- Contact Provider Modal -->
+<div class="modal fade" id="contactProviderModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0 pb-0">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary rounded-circle p-2 me-3">
+                        <i class="fas fa-message text-white"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0">Contact {{ $user->first_name }}</h5>
+                        <small class="text-muted">Send a message to this service provider</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            
+            @auth
+                <form action="{{ route('contacts.store', $user) }}" method="POST" id="contactForm">
+                    @csrf
+                    <input class="form-check-input" type="hidden" name="receiver_id" value="{{$user->id}}" checked>
+                    <div class="modal-body px-4">
+                        <!-- Contact Method Selection -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">How would you like to be contacted back?</label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="contact_method" id="contact_email" value="email" checked>
+                                        <label class="form-check-label d-flex align-items-center" for="contact_email">
+                                            <i class="fas fa-envelope text-primary me-2"></i>
+                                            <div>
+                                                <div class="fw-semibold">Email</div>
+                                                <small class="text-muted">{{ auth()->user()->email }}</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="contact_method" id="contact_phone" value="phone">
+                                        <label class="form-check-label d-flex align-items-center" for="contact_phone">
+                                            <i class="fas fa-phone text-success me-2"></i>
+                                            <div>
+                                                <div class="fw-semibold">Phone</div>
+                                                <small class="text-muted">Enter phone number below</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phone Number Field (shown when phone is selected) -->
+                        <div class="mb-4" id="phoneField" style="display: none;">
+                            <label for="phone_number" class="form-label fw-semibold">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0" style="border-radius: 15px 0 0 15px;">
+                                    <i class="fas fa-phone text-success"></i>
+                                </span>
+                                <input type="tel" name="phone_number" id="phone_number" class="form-control border-0 bg-light" placeholder="{{ auth()->check() ? auth()->user()->phone : '' }}" value="{{ auth()->check() ? auth()->user()->phone : '' }}" style="border-radius: 0 15px 15px 0;">
+                            </div>
+                        </div>
+
+                        <!-- Service Interest -->
+                        <div class="mb-4">
+                            <label for="service_interest" class="form-label fw-semibold">Service of Interest</label>
+                            <select name="service_interest" id="service_interest" class="form-select border-0 bg-light" style="border-radius: 15px;">
+                                <option value="">Select a service (optional)</option>
+                                @foreach($user->services as $service)
+                                    <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                @endforeach
+                                <option value="other">Other / General Inquiry</option>
+                            </select>
+                        </div>
+
+                        <!-- Project Timeline -->
+                        <div class="mb-4">
+                            <label for="timeline" class="form-label fw-semibold">Project Timeline</label>
+                            <select name="timeline" id="timeline" class="form-select border-0 bg-light" style="border-radius: 15px;" required>
+                                <option value="">When do you need this done?</option>
+                                <option value="asap">ASAP (Within a week)</option>
+                                <option value="within_month">Within a month</option>
+                                <option value="1_3_months">1-3 months</option>
+                                <option value="3_6_months">3-6 months</option>
+                                <option value="just_browsing">Just browsing/getting quotes</option>
+                            </select>
+                            <div class="form-text mt-2">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-phone text-success me-2 mt-1" style="font-size: 0.8rem;"></i>
+                                    <small class="text-muted">
+                                        <strong>Need immediate assistance?</strong> 
+                                        @auth
+                                            <a href="tel:{{ $user->phone_number ?? $user->email }}" class="text-decoration-none text-success fw-semibold">
+                                                Call {{ $user->first_name }} directly
+                                            </a>
+                                            @if($user->phone_number)
+                                                at <span class="fw-semibold">{{ $user->phone_number }}</span>
+                                            @else
+                                                or <a href="mailto:{{ $user->email }}" class="text-decoration-none text-success">email immediately</a>
+                                            @endif
+                                        @else
+                                            <button type="button" class="btn btn-link p-0 text-success fw-semibold text-decoration-none" 
+                                                    onclick="showLoginPrompt()" style="vertical-align: baseline; font-size: inherit;">
+                                                Call {{ $user->first_name }} directly
+                                            </button> 
+                                            <span class="text-muted">(login required to view contact info)</span>
+                                        @endauth
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Budget Range -->
+                        <div class="mb-4">
+                            <label for="budget_range" class="form-label fw-semibold">Budget Range (Optional)</label>
+                            <select name="budget_range" id="budget_range" class="form-select border-0 bg-light" style="border-radius: 15px;">
+                                <option value="">Select budget range</option>
+                                <option value="under_500">Under R500</option>
+                                <option value="500_1000">R500 - R1,000</option>
+                                <option value="1000_2500">R1,000 - R2,500</option>
+                                <option value="2500_5000">R2,500 - R5,000</option>
+                                <option value="5000_10000">R5,000 - R10,000</option>
+                                <option value="over_10000">Over R10,000</option>
+                            </select>
+                        </div>
+
+                        <!-- Message -->
+                        <div class="mb-4">
+                            <label for="message" class="form-label fw-semibold">Message</label>
+                            <textarea name="message" id="message" class="form-control border-0 bg-light" 
+                                      rows="4" placeholder="Describe your project or ask any questions..." 
+                                      style="border-radius: 15px;" required></textarea>
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-lightbulb me-1"></i>
+                                    Tip: Be specific about your requirements to get a better response
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Provider Info Summary -->
+                        <div class="bg-light rounded-4 p-3 mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 50px; height: 50px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 fw-bold">{{ $user->first_name }}</h6>
+                                    <div class="d-flex align-items-center gap-3 text-muted">
+                                        <small><i class="fas fa-star text-warning me-1"></i>{{ $user->years_of_experience }} years exp.</small>
+                                        <small><i class="fas fa-money-bill text-success me-1"></i>R{{ $user->hourly_rate }}/hour</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                            <i class="fas fa-paper-plane me-1"></i>Send Message
+                        </button>
+                    </div>
+                </form>
+            @else
+                <!-- Not Authenticated View -->
+                <div class="modal-body px-4 text-center py-5">
+                    <div class="mb-4">
+                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-lock text-muted" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Login Required</h5>
+                        <p class="text-muted mb-4">You need to be logged in to contact service providers.</p>
+                    </div>
+                    
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                        <a href="{{ route('login') }}" class="btn btn-primary rounded-pill px-4">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                        <a href="{{ route('provider.form') }}" class="btn btn-outline-primary rounded-pill px-4">
+                            <i class="fas fa-user-plus me-1"></i>Sign Up
+                        </a>
+                    </div>
+                    
+                    <!-- Alternative Contact Methods -->
+                    <div class="mt-4 pt-4 border-top">
+                        <p class="text-muted mb-3"><small>Or contact directly:</small></p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="mailto:{{ $user->email }}" class="btn btn-outline-secondary btn-sm rounded-pill">
+                                <i class="fas fa-envelope me-1"></i>Email
+                            </a>
+                            @if($user->phone_number)
+                                <a href="tel:{{ $user->phone_number }}" class="btn btn-outline-secondary btn-sm rounded-pill">
+                                    <i class="fas fa-phone me-1"></i>Call
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endauth
+        </div>
+    </div>
+</div>
+
 <style>
     .btn:hover {
         transform: translateY(-2px);
@@ -490,6 +698,33 @@
     .dropdown-item:hover {
         background-color: #f8f9fa;
         transform: translateX(2px);
+    }
+    
+    /* Phone field animation */
+    #phoneField {
+        transition: all 0.3s ease;
+    }
+    
+    /* Contact method radio styling */
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 0.5rem;
+        border-radius: 8px;
+    }
+    
+    .form-check-label:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .form-check-input:checked + .form-check-label {
+        background-color: #e7f3ff;
+        border: 1px solid #0d6efd;
     }
     
     @media (max-width: 768px) {
@@ -691,6 +926,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 });
+
+// Simple function to toggle phone field visibility
+function togglePhoneField() {
+    const phoneRadio = document.getElementById('contact_phone');
+    const emailRadio = document.getElementById('contact_email');
+    const phoneField = document.getElementById('phoneField');
+    const phoneInput = document.getElementById('phone_number');
+    
+    // Check if phone radio is selected
+    if (phoneRadio && phoneRadio.checked) {
+        phoneField.style.display = 'block';
+        phoneInput.required = true;
+    } else {
+        phoneField.style.display = 'none';
+        phoneInput.required = false;
+        phoneInput.value = ''; // Clear the input
+    }
+}
+
+// Add event listeners to both radio buttons
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneRadio = document.getElementById('contact_phone');
+    const emailRadio = document.getElementById('contact_email');
+    
+    if (phoneRadio) {
+        phoneRadio.addEventListener('change', togglePhoneField);
+    }
+    
+    if (emailRadio) {
+        emailRadio.addEventListener('change', togglePhoneField);
+    }
+    
+    // Initialize on page load
+    togglePhoneField();
+});
+
+// Alternative: Even simpler inline approach
+function showPhoneField() {
+    document.getElementById('phoneField').style.display = 'block';
+    document.getElementById('phone_number').required = true;
+}
+
+function hidePhoneField() {
+    document.getElementById('phoneField').style.display = 'none';
+    document.getElementById('phone_number').required = false;
+    document.getElementById('phone_number').value = '';
+}
+
+// You can also add this directly to the radio buttons in HTML:
+// <input type="radio" name="contact_method" id="contact_phone" value="phone" onchange="showPhoneField()">
+// <input type="radio" name="contact_method" id="contact_email" value="email" onchange="hidePhoneField()">
+
 </script>
 
 @endsection

@@ -12,12 +12,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Api\ServiceSearchController;
 use App\Http\Controllers\TestimonialController;
 
-/*
-Route::get('/', function () {
-    return view('pages.home');
-})->name('home');
-the above can can shorten like this:
-*/
+
 Route::view('/', 'pages.home')->name('home');
 
 Route::get('/register/provider', [ServiceProviderController::class, 'showForm'])->name('provider.form');
@@ -83,4 +78,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/users/{user}/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
     Route::put('/users/{user}/testimonials/{testimonial}', [TestimonialController::class, 'update'])->name('testimonials.update');
     Route::delete('/users/{user}/testimonials/{testimonial}', [TestimonialController::class, 'destroy'])->name('testimonials.destroy');
+});
+
+
+
+// Contact routes - Add these to your existing routes/web.php file
+Route::middleware(['auth'])->group(function () {
+    // Store contact request
+    Route::post('/users/{user}/contact', [MessageController::class, 'store'])->name('contacts.store');
+    
+    // Contact inbox for users
+    Route::get('/contacts/inbox', [MessageController::class, 'inbox'])->name('contacts.inbox');
+    
+    // Mark contact as responded
+    Route::patch('/contacts/{contact}/respond', [MessageController::class, 'markAsResponded'])->name('contacts.respond');
+    
+    // Archive contact
+    Route::patch('/contacts/{contact}/archive', [MessageController::class, 'archive'])->name('contacts.archive');
 });
