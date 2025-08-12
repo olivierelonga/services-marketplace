@@ -18,6 +18,9 @@ Route::view('/', 'pages.home')->name('home');
 Route::get('/register/provider', [ServiceProviderController::class, 'showForm'])->name('provider.form');
 Route::post('/register/provider', [ServiceProviderController::class, 'store'])->name('provider.store');
 
+Route::get('/register/user', [ServiceProviderController::class, 'userShowForm'])->name('user.form');
+Route::post('/register/user', [ServiceProviderController::class, 'storeNormalUser'])->name('user.store');
+
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);

@@ -21,10 +21,15 @@ class ServiceProviderController extends Controller
         return view('providers.register', compact('services'));
     }
 
+    public function userShowForm()
+    {
+        $services = Service::all();
+        return view('user.register', compact('services'));
+    }
+
 
     public function store(Request $request)
     {
-        //exit("exit");
         $validated = $request->validate([
             'first_name'          => 'required|string|max:255',
             'last_name'           => 'required|string|max:255',
@@ -76,6 +81,52 @@ class ServiceProviderController extends Controller
         ]);
 
         $user->services()->attach($validated['services']);
+
+        auth()->login($user);
+
+        return redirect()->route('dashboard'); // or confirmation
+    }
+
+    public function storeNormalUser(Request $request)
+    {
+        $validated = $request->validate([
+            'first_name'          => 'required|string|max:255',
+            'last_name'           => 'required|string|max:255',
+            'email'               => 'required|email|unique:users,email',
+            'password'            => 'required|min:6|confirmed',
+            'phone'               => 'required',
+            'location'            => 'nullable|string',
+            'date_of_birth'       => 'required|date|before:today',
+            'gender'              => 'nullable|in:male,female,other',
+        ]);
+
+        $whatsappNumb = $request->input('whatsapp_number');
+        if ($request->same_whatsapp_number) {
+            $whatsappNumb = $validated['phone'];
+        } 
+
+        $has_whatsapp = false;
+        if ($request->same_whatsapp_number == 'on' || !empty($request->input('whatsapp_number'))) {
+            $has_whatsapp = true;
+        } 
+
+
+        $user = User::create([
+            'first_name'          => $validated['first_name'],
+            'last_name'           => $validated['last_name'],
+            'email'               => $validated['email'],
+            'password'            => Hash::make($validated['password']),
+            'phone'               => $validated['phone'],
+            'location'            => $validated['location'],
+            'date_of_birth'       => $validated['date_of_birth'],
+            'gender'              => $validated['gender'],
+            'role'                => 'user',
+            'is_provider'         => '0',
+            'whatsapp_number'     => $whatsappNumb,
+            'has_whatsapp'        => $has_whatsapp,
+        ]);
+
+        //$user->services()->attach($validated['services']);
 
         auth()->login($user);
 

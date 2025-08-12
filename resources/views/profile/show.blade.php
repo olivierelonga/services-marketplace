@@ -573,7 +573,7 @@
                         <a href="{{ route('login') }}" class="btn btn-primary rounded-pill px-4">
                             <i class="fas fa-sign-in-alt me-1"></i>Login
                         </a>
-                        <a href="{{ route('provider.form') }}" class="btn btn-outline-primary rounded-pill px-4">
+                        <a href="{{ route('user.form') }}" class="btn btn-outline-primary rounded-pill px-4">
                             <i class="fas fa-user-plus me-1"></i>Sign Up
                         </a>
                     </div>
