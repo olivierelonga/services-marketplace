@@ -18,7 +18,7 @@
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-check-circle me-3 text-success" style="font-size: 1.2rem;"></i>
                                 <div>
-                                    <strong>Success!</strong> {{ session('success') }}
+                                    <strong>Great!</strong> {{ session('success') }}
                                 </div>
                             </div>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -30,7 +30,7 @@
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-exclamation-triangle me-3 text-danger" style="font-size: 1.2rem;"></i>
                                 <div>
-                                    <strong>Error!</strong> {{ session('error') }}
+                                    {{ session('error') }}
                                 </div>
                             </div>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

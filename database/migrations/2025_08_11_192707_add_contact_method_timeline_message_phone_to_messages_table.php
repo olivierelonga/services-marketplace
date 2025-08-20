@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('messages', function (Blueprint $table) {
             $table->enum('contact_method', ['email', 'phone'])->after('id');
             $table->string('timeline')->after('contact_method');
-            $table->string('phone_number')->nullable()->after('message');
+            $table->string('phone_number')->nullable()->after('body');
         });
     }
 
