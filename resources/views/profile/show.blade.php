@@ -63,10 +63,14 @@
                     <div class="card-body p-5">
                         <div class="row align-items-center">
                             <div class="col-auto">
-                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" 
-                                     style="width: 100px; height: 100px;">
-                                    <i class="fas fa-user text-white" style="font-size: 2.5rem;"></i>
-                                </div>
+                                @if ($user->profile_picture_url)
+                                    <img src="{{ $user->profile_picture_url }}" alt="Profile Picture" class="img-thumbnail rounded-circle" width="100" height="100">
+                                @else
+                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" 
+                                         style="width: 100px; height: 100px;">
+                                        <i class="fas fa-user text-white" style="font-size: 2.5rem;"></i>
+                                    </div>
+                                @endif
                             </div>
                             <div class="col">
                                 <h2 class="mb-2 fw-bold text-primary">{{ $user->first_name }}'s Profile</h2>

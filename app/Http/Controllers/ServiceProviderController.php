@@ -46,6 +46,7 @@ class ServiceProviderController extends Controller
             //'city'                => 'required|string|max:255',
             //'province'            => 'required|string|max:255',
             //'postal_code'         => 'required|string|max:20',
+            'profile_picture'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         $whatsappNumb = $request->input('whatsapp_number');
@@ -57,6 +58,14 @@ class ServiceProviderController extends Controller
         if ($request->same_whatsapp_number == 'on' || !empty($request->input('whatsapp_number'))) {
             $has_whatsapp = true;
         } 
+
+
+        // Handle Profile Picture Upload
+        $profilePicturePath = null;
+        if ($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $profilePicturePath = basename($path);
+        }
 
 
         $user = User::create([
@@ -78,6 +87,7 @@ class ServiceProviderController extends Controller
             //'postal_code'         => $validated['postal_code'],
             'whatsapp_number'     => $whatsappNumb,
             'has_whatsapp'        => $has_whatsapp,
+            'profile_picture'     => $profilePicturePath,
         ]);
 
         $user->services()->attach($validated['services']);
@@ -131,5 +141,17 @@ class ServiceProviderController extends Controller
         auth()->login($user);
 
         return redirect()->route('dashboard'); // or confirmation
+    }
+
+    /**
+     * Resize image using GD
+     */
+    private function resizeImage($src, $dst, $width, $height)
+    {
+        $imagick = new \Imagick($src);
+        $imagick->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, true);
+        $imagick->setImageFormat('jpeg');
+        $imagick->writeImage($dst);
+        $imagick->destroy();
     }
 }

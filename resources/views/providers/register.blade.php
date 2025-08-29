@@ -28,7 +28,7 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('provider.store') }}" class="needs-validation" novalidate>
+                        <form method="POST" action="{{ route('provider.store') }}" class="needs-validation" enctype="multipart/form-data" novalidate>
                             @csrf
 
                             <!-- Personal Information Section -->
@@ -41,6 +41,38 @@
                                 </div>
 
                                 <div class="row g-4">
+                                    <!-- Profile Picture Upload -->
+                                    <div class="col-12">
+                                        <div class="text-center mb-4">
+                                            <div class="profile-image-container position-relative d-inline-block">
+                                                <div class="profile-image-preview bg-light border border-2 border-dashed rounded-circle d-flex align-items-center justify-content-center" 
+                                                     style="width: 150px; height: 150px; cursor: pointer;" onclick="document.getElementById('profile_picture').click();">
+                                                    <div class="text-center">
+                                                        <i class="fas fa-camera text-muted" style="font-size: 2rem;"></i>
+                                                        <div class="text-muted mt-2 small">Upload Photo</div>
+                                                    </div>
+                                                </div>
+                                                <div class="position-absolute bottom-0 end-0">
+                                                    <div class="bg-primary rounded-circle p-2 shadow">
+                                                        <i class="fas fa-plus text-white"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="file" name="profile_picture" id="profile_picture" class="d-none" accept=".jpg,.jpeg,.png" data-allowed-types="image/jpeg,image/jpg,image/png">
+                                            <div class="mt-2">
+                                                <small class="text-muted">Upload a profile picture (JPG, JPEG, PNG - Max 2MB)</small>
+                                            </div>
+                                            <div id="profile-picture-error" class="text-danger mt-1" style="display: none;">
+                                                <small><i class="fas fa-exclamation-triangle me-1"></i>Please select a valid image file.</small>
+                                            </div>
+                                            @error('profile_picture')
+                                                <div class="text-danger mt-1">
+                                                    <small><i class="fas fa-exclamation-triangle me-1"></i>{{ $message }}</small>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="text" name="first_name" class="form-control border-2 rounded-4" 
@@ -119,15 +151,13 @@
                                                 <i class="fas fa-phone me-2"></i>Phone Number
                                             </label>
                                         </div>
-                                            <div style="padding-left: 90px; padding-top: 10px">
-                                                 <input class="form-check-input" type="checkbox" name="same_whatsapp_number" 
-                                                        id="same_whatsapp_number" checked {{ old('same_whatsapp_number', true) ? 'checked' : '' }}>
-                                                <label class="form-check-label fw-medium" for="same_whatsapp_number">
-                                                    <i class="fab fa-whatsapp text-success me-2"></i>Use the same number for WhatsApp
-                                                </label> 
-                                            </div>
-                                      
-
+                                        <div style="padding-left: 90px; padding-top: 10px">
+                                            <input class="form-check-input" type="checkbox" name="same_whatsapp_number" 
+                                                   id="same_whatsapp_number" {{ old('same_whatsapp_number', true) ? 'checked' : '' }}>
+                                            <label class="form-check-label fw-medium" for="same_whatsapp_number">
+                                                <i class="fab fa-whatsapp text-success me-2"></i>Use the same number for WhatsApp
+                                            </label> 
+                                        </div>
                                     </div>
                                     
                                     <div class="col-md-6" id="whatsapp_field" style="display: none;">
@@ -138,7 +168,6 @@
                                             </label>
                                         </div>
                                     </div>
-
 
                                     <div class="col-12">
                                         <div class="form-floating">
@@ -155,16 +184,6 @@
                                         <input type="hidden" name="province" id="province" value="{{ old('province') }}">
                                         <input type="hidden" name="postal_code" id="postal_code" value="{{ old('postal_code') }}">
                                     </div>
-
-
-                                    {{-- <div class="col-12">
-                                        <div class="form-floating">
-                                            <input type="text" name="location" class="form-control border-2 rounded-4" id="location" placeholder="Location" value="{{ old('location') }}" style="padding-top: 1.625rem; padding-bottom: .625rem;">
-                                            <label for="location" class="text-muted">
-                                                <i class="fas fa-map-marker-alt me-2"></i>Location / City
-                                            </label>
-                                        </div>
-                                    </div> --}}
                                 </div>
                             </div>
 
@@ -242,7 +261,7 @@
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="password" name="password" class="form-control border-2 rounded-4" required
-                                                   id="password" placeholder="Password" required
+                                                   id="password" placeholder="Password"
                                                    style="padding-top: 1.625rem; padding-bottom: .625rem;">
                                             <label for="password" class="text-muted">
                                                 <i class="fas fa-lock me-2"></i>Password
@@ -278,10 +297,8 @@
                         <div class="text-center mt-4">
                             <p class="text-muted mb-0">Already have an account? <a href="{{ route('login') }}" class="text-primary fw-semibold text-decoration-none">Sign in here</a></p>
                         </div>
-
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

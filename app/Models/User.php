@@ -35,6 +35,7 @@ class User extends Authenticatable
         'is_provider',
         'whatsapp_number',
         'has_whatsapp',
+        'profile_picture',
     ];
 
     /**
@@ -103,5 +104,14 @@ class User extends Authenticatable
     public function getTotalTestimonialsAttribute()
     {
         return $this->testimonials()->count();
+    }
+
+    public function getProfilePictureUrlAttribute()
+    {
+        if ($this->profile_picture) {
+            return asset('storage/profile_pictures/' . $this->profile_picture);
+        }
+
+        return null;
     }
 }
