@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+body {
+    background-color: #f5f7fa;
+    font-family: 'Roboto', sans-serif;
+    color: #334155;
+}
+
+.profile-layout {
+    display: flex;
+    gap: 2rem;
+}
+
+.profile-sidebar-vue {
+    flex: 0 0 300px;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.profile-main-vue {
+    flex: 1;
+}
+
+.profile-picture-vue {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+}
+
+.profile-name-vue {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.profile-email-vue {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+}
+
+.profile-stats-vue {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.stat-item-vue .stat-value-vue {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.stat-item-vue .stat-label-vue {
+    color: #64748b;
+}
+
+.profile-card-vue {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.card-header-vue {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-header-vue i {
+    font-size: 1.5rem;
+    color: #3b82f6;
+    margin-right: 1rem;
+}
+
+.card-title-vue {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.service-tag-vue {
+    background-color: #eef2ff;
+    color: #3b82f6;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
+
+.testimonial-vue {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.testimonial-vue:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.rating-vue .fa-star {
+    color: #f59e0b;
+}
+
+.share-btn-vue {
+    background: #10b981;
+    color: #fff;
+}
+
+.share-btn-vue:hover {
+    background: #059669;
+}
+
+.share-modal-body .share-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: #f5f7fa;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.share-modal-body .share-btn:hover {
+    background: #eef2ff;
+    color: #3b82f6;
+}
+
+.share-modal-body .share-btn i {
+    font-size: 2rem;
+}

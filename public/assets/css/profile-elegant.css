@@ -1,0 +1,81 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Open+Sans:wght@400;600&display=swap');
+
+body {
+    background-color: #fdfdfd;
+    font-family: 'Open Sans', sans-serif;
+    color: #444;
+}
+
+.profile-header-elegant {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 3rem 0;
+    text-align: center;
+}
+
+.profile-picture-elegant {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.profile-name-elegant {
+    font-family: 'Lora', serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-top: 1rem;
+}
+
+.profile-title-elegant {
+    font-size: 1.2rem;
+    color: #bdc3c7;
+}
+
+.profile-card-elegant {
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.section-heading {
+    font-family: 'Lora', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #2c3e50;
+    padding-bottom: 0.5rem;
+}
+
+.service-item-elegant {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease;
+}
+
+.service-item-elegant:hover {
+    background-color: #f8f9fa;
+}
+
+.service-item-elegant i {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-right: 1rem;
+}
+
+.testimonial-elegant {
+    border-left: 3px solid #bdc3c7;
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.testimonial-author-elegant {
+    font-weight: 600;
+    font-style: italic;
+}
