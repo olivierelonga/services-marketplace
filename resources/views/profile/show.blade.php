@@ -3,6 +3,28 @@
 @section('content')
 <link rel="stylesheet" href="{{ asset('assets/css/profile-vue-inspired.css') }}">
 
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="{{ url('/') }}">yelp</a>
+
+        <div class="ms-auto d-flex align-items-center gap-2">
+            @auth
+                <a href="{{ route('messages.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-envelope-fill me-1"></i> Messages
+                </a>
+                <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-person-circle me-1"></i> Profile
+                </a>
+            @endauth
+
+            @guest
+                <a href="{{ route('login') }}" class="btn btn-outline-primary">Login</a>
+                <a href="{{ route('provider.form') }}" class="btn btn-primary">Join as a Professional</a>
+            @endguest
+        </div>
+    </div>
+</nav>
+
 <div class="container py-5">
     <div class="profile-layout">
         <div class="profile-sidebar-vue">
@@ -84,26 +106,18 @@
 
 <!-- Contact Provider Modal -->
 <div class="modal fade" id="contactProviderModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-            <div class="modal-header border-0 pb-0">
-                <div class="d-flex align-items-center">
-                    <div class="bg-primary rounded-circle p-2 me-3">
-                        <i class="fas fa-message text-white"></i>
-                    </div>
-                    <div>
-                        <h5 class="modal-title fw-bold mb-0">Contact {{ $user->first_name }}</h5>
-                        <small class="text-muted">Send a message to this service provider</small>
-                    </div>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header">
+                <h5 class="modal-title">Contact {{ $user->first_name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             @auth
                 <form action="{{ route('contacts.store', $user) }}" method="POST" id="contactForm">
                     @csrf
                     <input class="form-check-input" type="hidden" name="receiver_id" value="{{$user->id}}" checked>
-                    <div class="modal-body px-4">
+                    <div class="modal-body">
                         <!-- Contact Method Selection -->
                         <div class="mb-4">
                             <label class="form-label fw-semibold">How would you like to be contacted back?</label>
@@ -264,13 +278,13 @@
                         <a href="{{ route('login') }}" class="btn btn-primary rounded-pill px-4">
                             <i class="fas fa-sign-in-alt me-1"></i>Login
                         </a>
-                        <a href="{{ route('user.form') }}" class="btn btn-outline-primary rounded-pill px-4">
+                        <button type="button" class="btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#signUpChoiceModal">
                             <i class="fas fa-user-plus me-1"></i>Sign Up
-                        </a>
+                        </button>
                     </div>
                     
                     <!-- Alternative Contact Methods -->
-                    <div class="mt-4 pt-4 border-top">
+                    {{-- <div class="mt-4 pt-4 border-top">
                         <p class="text-muted mb-3"><small>Or contact directly:</small></p>
                         <div class="d-flex justify-content-center gap-3">
                             <a href="mailto:{{ $user->email }}" class="btn btn-outline-secondary btn-sm rounded-pill">
@@ -282,9 +296,31 @@
                                 </a>
                             @endif
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             @endauth
+        </div>
+    </div>
+</div>
+
+<!-- Sign Up Choice Modal -->
+<div class="modal fade" id="signUpChoiceModal" tabindex="-1" aria-labelledby="signUpChoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signUpChoiceModalLabel">Join as:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="d-grid gap-3">
+                    <a href="{{ route('user.form') }}" class="btn btn-primary btn-lg rounded-pill">
+                        <i class="fas fa-user me-1"></i> A Normal User
+                    </a>
+                    <a href="{{ route('provider.form') }}" class="btn btn-outline-primary btn-lg rounded-pill">
+                        <i class="fas fa-briefcase me-1"></i> A Service Provider
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -292,7 +328,7 @@
 <!-- Share Profile Modal -->
 <div class="modal fade" id="shareProfileModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content border-0 shadow-lg">
             <div class="modal-header">
                 <h5 class="modal-title">Share Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

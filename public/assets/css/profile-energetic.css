@@ -1,0 +1,81 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+body {
+    background-color: #f0f4f8;
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+}
+
+.profile-header-energetic {
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+    color: #fff;
+    padding: 4rem 0;
+    text-align: center;
+    border-radius: 0 0 50% 50% / 0 0 10% 10%;
+}
+
+.profile-picture-energetic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    transform: translateY(50%);
+}
+
+.profile-name-energetic {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-top: 80px;
+}
+
+.profile-card-energetic {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.section-title-energetic {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #ff416c;
+}
+
+.service-tag-energetic {
+    background: #ff416c;
+    color: #fff;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 700;
+    display: inline-block;
+    margin: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.service-tag-energetic:hover {
+    transform: scale(1.1);
+}
+
+.testimonial-card-energetic {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    position: relative;
+}
+
+.testimonial-card-energetic::before {
+    content: '\201C';
+    font-size: 5rem;
+    color: #ff416c;
+    position: absolute;
+    top: -20px;
+    left: 10px;
+    opacity: 0.2;
+}
