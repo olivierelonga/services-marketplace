@@ -7,8 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
+        if ($request->has('redirect_to')) {
+            session(['url.intended' => $request->redirect_to]);
+        }
         return view('auth.login');
     }
 

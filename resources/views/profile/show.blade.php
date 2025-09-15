@@ -106,219 +106,163 @@
 
 <!-- Contact Provider Modal -->
 <div class="modal fade" id="contactProviderModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-            <div class="modal-header">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header border-0">
                 <h5 class="modal-title">Contact {{ $user->first_name }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
-            @auth
-                <form action="{{ route('contacts.store', $user) }}" method="POST" id="contactForm">
-                    @csrf
-                    <input class="form-check-input" type="hidden" name="receiver_id" value="{{$user->id}}" checked>
-                    <div class="modal-body">
-                        <!-- Contact Method Selection -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">How would you like to be contacted back?</label>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="contact_method" id="contact_email" value="email" checked>
-                                        <label class="form-check-label d-flex align-items-center" for="contact_email">
-                                            <i class="fas fa-envelope text-primary me-2"></i>
-                                            <div>
-                                                <div class="fw-semibold">Email</div>
-                                                <small class="text-muted">{{ auth()->user()->email }}</small>
+            <div class="modal-body p-0">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center bg-light p-5">
+                            <div class="text-center">
+                                <img src="{{ $user->profile_picture_url ?? 'https://i.pravatar.cc/150?u=' . $user->id }}" alt="Profile Picture" class="img-fluid rounded-circle mb-4" style="width: 150px; height: 150px; object-fit: cover;">
+                                <h2 class="fw-bold mb-3">{{ $user->first_name }} {{ $user->last_name }}</h2>
+                                <p class="text-muted mb-4">{{ $user->email }}</p>
+                                <div class="d-flex justify-content-center gap-4">
+                                    <div class="text-center">
+                                        <div class="fw-bold fs-4">{{ $user->years_of_experience }}</div>
+                                        <div class="text-muted">Years</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="fw-bold fs-4">R{{ $user->hourly_rate }}</div>
+                                        <div class="text-muted">Hourly Rate</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 p-5">
+                            <h2 class="fw-bold mb-4">Send a Message</h2>
+                            <form action="{{ route('contacts.store', $user) }}" method="POST" id="contactForm">
+                                @csrf
+                                <input type="hidden" name="receiver_id" value="{{$user->id}}">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="contact_method_email" class="form-label">Contact Method</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="contact_method" id="contact_method_email" value="email" checked>
+                                            <label class="form-check-label" for="contact_method_email">Email</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="contact_method_phone" class="form-label">&nbsp;</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="contact_method" id="contact_method_phone" value="phone">
+                                            <label class="form-check-label" for="contact_method_phone">Phone</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3" id="phoneField" style="display: none;">
+                                    <label for="phone_number" class="form-label">Phone Number</label>
+                                    <input type="tel" name="phone_number" id="phone_number" class="form-control form-control-lg" placeholder="Your Phone Number">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="service_interest" class="form-label">Service of Interest</label>
+                                    <select name="service_interest" id="service_interest" class="form-select form-select-lg">
+                                        <option value="">Select a service</option>
+                                        @foreach($user->services as $service)
+                                            <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                        @endforeach
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="timeline" class="form-label">Project Timeline <span class="text-danger">*</span></label>
+                                        <select name="timeline" id="timeline" class="form-select form-select-lg" required>
+                                            <option value="">Select a timeline</option>
+                                            <option value="asap">ASAP</option>
+                                            <option value="within_month">Within a month</option>
+                                            <option value="1_3_months">1-3 months</option>
+                                            <option value="3_6_months">3-6 months</option>
+                                            <option value="just_browsing">Just browsing</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="budget_range" class="form-label">Budget Range</label>
+                                        <select name="budget_range" id="budget_range" class="form-select form-select-lg">
+                                            <option value="">Select a budget</option>
+                                            <option value="under_500">Under R500</option>
+                                            <option value="500_1000">R500 - R1,000</option>
+                                            <option value="1000_2500">R1,000 - R2,500</option>
+                                            <option value="2500_5000">R2,500 - R5,000</option>
+                                            <option value="5000_10000">R5,000 - R10,000</option>
+                                            <option value="over_10000">Over R10,000</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
+                                    <textarea name="message" id="message" class="form-control form-control-lg" rows="5" placeholder="Tell us about your project..." required></textarea>
+                                    <div class="form-text">You can type your message here or record a voice memo below (or both).</div>
+                                </div>
+                                
+                                <!-- Voice Memo Section using RecordRTC -->
+                                <div class="mb-3">
+                                    <label class="form-label">Voice Memo (Optional)</label>
+                                    <div class="card" style="border: 2px dashed #dee2e6;">
+                                        <div class="card-body">
+                                            <!-- Recording Controls -->
+                                            <div id="voice-recorder-container">
+                                                <div id="start-section" class="text-center">
+                                                    <button type="button" id="start-recording" class="btn btn-outline-primary">
+                                                        <i class="bi bi-mic-fill me-2"></i>Start Voice Recording
+                                                    </button>
+                                                    <p class="text-muted small mt-2">Click to record a voice message</p>
+                                                </div>
+                                                
+                                                <div id="recording-section" class="text-center" style="display: none;">
+                                                    <div class="mb-3">
+                                                        <div class="recording-pulse">
+                                                            <div class="pulse-ring"></div>
+                                                            <i class="bi bi-mic-fill text-danger fs-1"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <span class="badge bg-danger fs-6" id="recording-timer">00:00</span>
+                                                    </div>
+                                                    <button type="button" id="stop-recording" class="btn btn-danger">
+                                                        <i class="bi bi-stop-fill me-2"></i>Stop Recording
+                                                    </button>
+                                                </div>
+                                                
+                                                <div id="playback-section" style="display: none;">
+                                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                                        <div>
+                                                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                            <span class="text-success">Voice memo recorded!</span>
+                                                        </div>
+                                                        <span id="recording-duration" class="badge bg-info"></span>
+                                                    </div>
+                                                    
+                                                    <div class="mb-3">
+                                                        <audio controls class="w-100" id="audio-playback">
+                                                            Your browser does not support audio playback.
+                                                        </audio>
+                                                    </div>
+                                                    
+                                                    <div class="d-flex gap-2 justify-content-center">
+                                                        <button type="button" id="re-record" class="btn btn-outline-secondary btn-sm">
+                                                            <i class="bi bi-arrow-clockwise me-1"></i>Re-record
+                                                        </button>
+                                                        <button type="button" id="delete-recording" class="btn btn-outline-danger btn-sm">
+                                                            <i class="bi bi-trash me-1"></i>Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </label>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="contact_method" id="contact_phone" value="phone">
-                                        <label class="form-check-label d-flex align-items-center" for="contact_phone">
-                                            <i class="fas fa-phone text-success me-2"></i>
-                                            <div>
-                                                <div class="fw-semibold">Phone</div>
-                                                <small class="text-muted">Enter phone number below</small>
-                                            </div>
-                                        </label>
-                                    </div>
+                                <input type="hidden" name="has_voice_memo" id="has_voice_memo" value="0">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Phone Number Field (shown when phone is selected) -->
-                        <div class="mb-4" id="phoneField" style="display: none;">
-                            <label for="phone_number" class="form-label fw-semibold">Phone Number</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-0" style="border-radius: 15px 0 0 15px;">
-                                    <i class="fas fa-phone text-success"></i>
-                                </span>
-                                <input type="tel" name="phone_number" id="phone_number" class="form-control border-0 bg-light" placeholder="{{ auth()->check() ? auth()->user()->phone : '' }}" value="{{ auth()->check() ? auth()->user()->phone : '' }}" style="border-radius: 0 15px 15px 0;">
-                            </div>
-                        </div>
-
-                        <!-- Service Interest -->
-                        <div class="mb-4">
-                            <label for="service_interest" class="form-label fw-semibold">Service of Interest</label>
-                            <select name="service_interest" id="service_interest" class="form-select border-0 bg-light" style="border-radius: 15px;">
-                                <option value="">Select a service (optional)</option>
-                                @foreach($user->services as $service)
-                                    <option value="{{ $service->id }}">{{ $service->name }}</option>
-                                @endforeach
-                                <option value="other">Other / General Inquiry</option>
-                            </select>
-                        </div>
-
-                        <!-- Project Timeline -->
-                        <div class="mb-4">
-                            <label for="timeline" class="form-label fw-semibold">Project Timeline</label>
-                            <select name="timeline" id="timeline" class="form-select border-0 bg-light" style="border-radius: 15px;" required>
-                                <option value="">When do you need this done?</option>
-                                <option value="asap">ASAP (Within a week)</option>
-                                <option value="within_month">Within a month</option>
-                                <option value="1_3_months">1-3 months</option>
-                                <option value="3_6_months">3-6 months</option>
-                                <option value="just_browsing">Just browsing/getting quotes</option>
-                            </select>
-                            <div class="form-text mt-2">
-                                <div class="d-flex align-items-start">
-                                    <i class="fas fa-phone text-success me-2 mt-1" style="font-size: 0.8rem;"></i>
-                                    <small class="text-muted">
-                                        <strong>Need immediate assistance?</strong> 
-                                        @auth
-                                            <a href="tel:{{ $user->phone_number ?? $user->email }}" class="text-decoration-none text-success fw-semibold">
-                                                Call {{ $user->first_name }} directly
-                                            </a>
-                                            @if($user->phone_number)
-                                                at <span class="fw-semibold">{{ $user->phone_number }}</span>
-                                            @else
-                                                or <a href="mailto:{{ $user->email }}" class="text-decoration-none text-success">email immediately</a>
-                                            @endif
-                                        @else
-                                            <button type="button" class="btn btn-link p-0 text-success fw-semibold text-decoration-none" 
-                                                    onclick="showLoginPrompt()" style="vertical-align: baseline; font-size: inherit;">
-                                                Call {{ $user->first_name }} directly
-                                            </button> 
-                                            <span class="text-muted">(login required to view contact info)</span>
-                                        @endauth
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Budget Range -->
-                        <div class="mb-4">
-                            <label for="budget_range" class="form-label fw-semibold">Budget Range (Optional)</label>
-                            <select name="budget_range" id="budget_range" class="form-select border-0 bg-light" style="border-radius: 15px;">
-                                <option value="">Select budget range</option>
-                                <option value="under_500">Under R500</option>
-                                <option value="500_1000">R500 - R1,000</option>
-                                <option value="1000_2500">R1,000 - R2,500</option>
-                                <option value="2500_5000">R2,500 - R5,000</option>
-                                <option value="5000_10000">R5,000 - R10,000</option>
-                                <option value="over_10000">Over R10,000</option>
-                            </select>
-                        </div>
-
-                        <!-- Message -->
-                        <div class="mb-4">
-                            <label for="message" class="form-label fw-semibold">Message</label>
-                            <textarea name="message" id="message" class="form-control border-0 bg-light" 
-                                      rows="4" placeholder="Describe your project or ask any questions..." 
-                                      style="border-radius: 15px;" required></textarea>
-                            <div class="form-text">
-                                <small class="text-muted">
-                                    <i class="fas fa-lightbulb me-1"></i>
-                                    Tip: Be specific about your requirements to get a better response
-                                </small>
-                            </div>
-                        </div>
-
-                        <!-- Provider Info Summary -->
-                        <div class="bg-light rounded-4 p-3 mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                     style="width: 50px; height: 50px;">
-                                    <i class="fas fa-user text-white"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1 fw-bold">{{ $user->first_name }}</h6>
-                                    <div class="d-flex align-items-center gap-3 text-muted">
-                                        <small><i class="fas fa-star text-warning me-1"></i>{{ $user->years_of_experience }} years exp.</small>
-                                        <small><i class="fas fa-money-bill text-success me-1"></i>R{{ $user->hourly_rate }}/hour</small>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
-                    
-                    <div class="modal-footer border-0 pt-0">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">
-                            <i class="fas fa-paper-plane me-1"></i>Send Message
-                        </button>
-                    </div>
-                </form>
-            @else
-                <!-- Not Authenticated View -->
-                <div class="modal-body px-4 text-center py-5">
-                    <div class="mb-4">
-                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
-                            <i class="fas fa-lock text-muted" style="font-size: 2rem;"></i>
-                        </div>
-                        <h5 class="fw-bold mb-2">Login Required</h5>
-                        <p class="text-muted mb-4">You need to be logged in to contact service providers.</p>
-                    </div>
-                    
-                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                        <a href="{{ route('login') }}" class="btn btn-primary rounded-pill px-4">
-                            <i class="fas fa-sign-in-alt me-1"></i>Login
-                        </a>
-                        <button type="button" class="btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#signUpChoiceModal">
-                            <i class="fas fa-user-plus me-1"></i>Sign Up
-                        </button>
-                    </div>
-                    
-                    <!-- Alternative Contact Methods -->
-                    {{-- <div class="mt-4 pt-4 border-top">
-                        <p class="text-muted mb-3"><small>Or contact directly:</small></p>
-                        <div class="d-flex justify-content-center gap-3">
-                            <a href="mailto:{{ $user->email }}" class="btn btn-outline-secondary btn-sm rounded-pill">
-                                <i class="fas fa-envelope me-1"></i>Email
-                            </a>
-                            @if($user->phone_number)
-                                <a href="tel:{{ $user->phone_number }}" class="btn btn-outline-secondary btn-sm rounded-pill">
-                                    <i class="fas fa-phone me-1"></i>Call
-                                </a>
-                            @endif
-                        </div>
-                    </div> --}}
-                </div>
-            @endauth
-        </div>
-    </div>
-</div>
-
-<!-- Sign Up Choice Modal -->
-<div class="modal fade" id="signUpChoiceModal" tabindex="-1" aria-labelledby="signUpChoiceModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header">
-                <h5 class="modal-title" id="signUpChoiceModalLabel">Join as:</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <div class="d-grid gap-3">
-                    <a href="{{ route('user.form') }}" class="btn btn-primary btn-lg rounded-pill">
-                        <i class="fas fa-user me-1"></i> A Normal User
-                    </a>
-                    <a href="{{ route('provider.form') }}" class="btn btn-outline-primary btn-lg rounded-pill">
-                        <i class="fas fa-briefcase me-1"></i> A Service Provider
-                    </a>
                 </div>
             </div>
         </div>
@@ -363,33 +307,356 @@
 @endsection
 
 @push('scripts')
+<!-- RecordRTC for reliable audio recording -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/RecordRTC/5.6.2/RecordRTC.min.js"></script>
+
+<style>
+.recording-pulse {
+    position: relative;
+    display: inline-block;
+}
+
+.pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border: 3px solid #dc3545;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+}
+
+.voice-recorder-card {
+    transition: all 0.3s ease;
+}
+
+.voice-recorder-card:hover {
+    border-color: #0d6efd !important;
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.1);
+}
+</style>
+
 <script>
-    function copyProfileLink() {
-        var copyText = document.getElementById("profileUrl");
-        copyText.select();
-        copyText.setSelectionRange(0, 99999); /* For mobile devices */
+$(document).ready(function() {
+    // Form elements
+    const phoneField = $('#phoneField');
+    const contactEmail = $('#contact_method_email');
+    const contactPhone = $('#contact_method_phone');
+    const hasVoiceMemoInput = $('#has_voice_memo');
+    
+    // Voice recording elements
+    const startSection = $('#start-section');
+    const recordingSection = $('#recording-section');
+    const playbackSection = $('#playback-section');
+    const startBtn = $('#start-recording');
+    const stopBtn = $('#stop-recording');
+    const reRecordBtn = $('#re-record');
+    const deleteBtn = $('#delete-recording');
+    const timerElement = $('#recording-timer');
+    const durationElement = $('#recording-duration');
+    const audioPlayback = $('#audio-playback')[0];
+    
+    // Recording variables
+    let recorder = null;
+    let recordingBlob = null;
+    let timerInterval = null;
+    let recordingStartTime = null;
+
+    // Contact method toggle
+    contactEmail.on('change', function() {
+        if ($(this).is(':checked')) {
+            phoneField.hide();
+        }
+    });
+
+    contactPhone.on('change', function() {
+        if ($(this).is(':checked')) {
+            phoneField.show();
+        }
+    });
+
+    // Start recording
+    startBtn.on('click', async function() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
+                }
+            });
+
+            // Initialize RecordRTC
+            recorder = new RecordRTC(stream, {
+                type: 'audio',
+                mimeType: 'audio/webm',
+                recorderType: RecordRTC.StereoAudioRecorder,
+                numberOfAudioChannels: 1,
+                desiredSampRate: 16000
+            });
+
+            // Start recording
+            recorder.startRecording();
+            recordingStartTime = Date.now();
+
+            // Update UI
+            startSection.hide();
+            recordingSection.show();
+
+            // Start timer
+            let seconds = 0;
+            timerInterval = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const secs = (seconds % 60).toString().padStart(2, '0');
+                timerElement.text(`${mins}:${secs}`);
+            }, 1000);
+
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+            alert('Could not access microphone. Please check your browser permissions.');
+        }
+    });
+
+
+    // Stop recording - FIXED VERSION
+    stopBtn.on('click', function() {
+        if (recorder) {
+            recorder.stopRecording(function() {
+                // Get the recorded blob
+                recordingBlob = recorder.getBlob();
+                
+                // Stop the stream - ADD NULL CHECK HERE
+                try {
+                    const internalRecorder = recorder.getInternalRecorder();
+                    if (internalRecorder && internalRecorder.stream) {
+                        internalRecorder.stream.getTracks().forEach(track => track.stop());
+                    }
+                } catch (error) {
+                    console.warn('Error stopping stream tracks:', error);
+                }
+                
+                // Clear timer
+                clearInterval(timerInterval);
+                
+                // Calculate duration
+                const duration = Math.floor((Date.now() - recordingStartTime) / 1000);
+                const mins = Math.floor(duration / 60).toString().padStart(2, '0');
+                const secs = (duration % 60).toString().padStart(2, '0');
+                durationElement.text(`${mins}:${secs}`);
+                
+                // Create audio URL for playback
+                const audioUrl = URL.createObjectURL(recordingBlob);
+                audioPlayback.src = audioUrl;
+                
+                // Update UI
+                recordingSection.hide();
+                playbackSection.show();
+                
+                // Mark that we have a voice memo
+                hasVoiceMemoInput.val('1');
+                
+                console.log('Recording completed:', recordingBlob);
+            });
+        }
+    });
+
+    // Re-record
+    reRecordBtn.on('click', function() {
+        resetRecording();
+    });
+
+    // Delete recording
+    deleteBtn.on('click', function() {
+        if (confirm('Are you sure you want to delete this voice memo?')) {
+            resetRecording();
+        }
+    });
+
+    // Enhanced resetRecording function with better cleanup
+    function resetRecording() {
+        // Clean up stream tracks first
+        if (recorder) {
+            try {
+                const internalRecorder = recorder.getInternalRecorder();
+                if (internalRecorder && internalRecorder.stream) {
+                    internalRecorder.stream.getTracks().forEach(track => track.stop());
+                }
+            } catch (error) {
+                console.warn('Error stopping tracks during reset:', error);
+            }
+        }
+        
+        // Clean up audio URL
+        if (audioPlayback.src) {
+            URL.revokeObjectURL(audioPlayback.src);
+            audioPlayback.src = '';
+        }
+        
+        recordingBlob = null;
+        recorder = null;
+        
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        
+        // Reset UI
+        playbackSection.hide();
+        recordingSection.hide();
+        startSection.show();
+        
+        timerElement.text('00:00');
+        hasVoiceMemoInput.val('0');
+    }
+
+    // Form submission
+    // $('#contactForm').on('submit', function(e) {
+    //     e.preventDefault();
+
+    //     // Validation
+    //     const timeline = $('#timeline').val();
+    //     const message = $('#message').val().trim();
+        
+    //     let errors = [];
+        
+    //     if (!timeline) {
+    //         errors.push('Please select a project timeline.');
+    //     }
+        
+    //     if (!message) {
+    //         errors.push('Please enter a message.');
+    //     }
+        
+    //     if (errors.length > 0) {
+    //         alert(errors.join('\n'));
+    //         return;
+    //     }
+
+    //     // Prepare form data
+    //     const formData = new FormData(this);
+        
+    //     // Add voice memo if exists
+    //     if (recordingBlob) {
+    //         formData.append('voice_memo', recordingBlob, 'voice_memo.webm');
+    //     }
+
+    //     // Show loading state
+    //     const submitBtn = $(this).find('button[type="submit"]');
+    //     const originalText = submitBtn.html();
+    //     submitBtn.html('<span class="spinner-border spinner-border-sm me-2"></span>Sending...').prop('disabled', true);
+
+    //     // Submit form
+    //     $.ajax({
+    //         url: this.action,
+    //         type: 'POST',
+    //         data: formData,
+    //         processData: false,
+    //         contentType: false,
+    //         headers: {
+    //             'X-Requested-With': 'XMLHttpRequest'
+    //         },
+    //         success: function(response) {
+    //             alert('Message sent successfully! The service provider will get back to you soon.');
+    //             $('#contactProviderModal').modal('hide');
+    //             resetForm();
+    //         },
+    //         error: function(xhr) {
+    //             console.error('Error:', xhr.responseJSON);
+                
+    //             let errorMessage = 'Error sending message. Please try again.';
+                
+    //             if (xhr.responseJSON && xhr.responseJSON.errors) {
+    //                 const errors = xhr.responseJSON.errors;
+    //                 const messages = [];
+                    
+    //                 Object.keys(errors).forEach(field => {
+    //                     errors[field].forEach(msg => messages.push(`• ${msg}`));
+    //                 });
+                    
+    //                 errorMessage = 'Please fix the following errors:\n\n' + messages.join('\n');
+    //             } else if (xhr.responseJSON && xhr.responseJSON.message) {
+    //                 errorMessage = xhr.responseJSON.message;
+    //             }
+                
+    //             alert(errorMessage);
+    //         },
+    //         complete: function() {
+    //             submitBtn.html(originalText).prop('disabled', false);
+    //         }
+    //     });
+    // });
+
+    // Reset entire form
+    function resetForm() {
+        $('#contactForm')[0].reset();
+        phoneField.hide();
+        contactEmail.prop('checked', true);
+        resetRecording();
+    }
+
+    // Also fix the cleanup in modal close handler
+    $('#contactProviderModal').on('hidden.bs.modal', function() {
+        if (recorder && recorder.getState() === 'recording') {
+            recorder.stopRecording(() => {
+                try {
+                    const internalRecorder = recorder.getInternalRecorder();
+                    if (internalRecorder && internalRecorder.stream) {
+                        internalRecorder.stream.getTracks().forEach(track => track.stop());
+                    }
+                } catch (error) {
+                    console.warn('Error stopping stream tracks on modal close:', error);
+                }
+            });
+        }
+        resetForm();
+    });
+});
+
+// Social sharing functions
+function copyProfileLink() {
+    const copyText = document.getElementById("profileUrl");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    
+    navigator.clipboard.writeText(copyText.value).then(function() {
+        alert("Profile link copied to clipboard!");
+    }).catch(function() {
         document.execCommand("copy");
-        alert("Copied the text: " + copyText.value);
-    }
+        alert("Profile link copied to clipboard!");
+    });
+}
 
-    function shareToFacebook() {
-        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank');
-    }
+function shareToFacebook() {
+    window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank');
+}
 
-    function shareToX() {
-        window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href), '_blank');
-    }
+function shareToX() {
+    window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href), '_blank');
+}
 
-    function shareToLinkedIn() {
-        window.open('https://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(window.location.href), '_blank');
-    }
+function shareToLinkedIn() {
+    window.open('https://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(window.location.href), '_blank');
+}
 
-    function shareToWhatsApp() {
-        window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(window.location.href), '_blank');
-    }
+function shareToWhatsApp() {
+    window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(window.location.href), '_blank');
+}
 
-    function shareViaEmail() {
-        window.location.href = 'mailto:?subject=Check out this profile&body=' + encodeURIComponent(window.location.href);
-    }
+function shareViaEmail() {
+    window.location.href = 'mailto:?subject=Check out this profile&body=' + encodeURIComponent(window.location.href);
+}
 </script>
 @endpush

@@ -107,8 +107,10 @@ class MessageController extends Controller
             'message' => 'required|min:5',
             'phone_number' => 'required_if:contact_method,phone',
             'receiver_id' => 'required|exists:users,id',
+            'voice_memo_path' => 'nullable|string',
+            'transcript' => 'nullable|string',
         ]);
-
+        
         $message = new Message();
         $message->sender_id = auth()->id();
         $message->receiver_id = $validated['receiver_id'];
@@ -116,8 +118,28 @@ class MessageController extends Controller
         $message->timeline = $validated['timeline'];
         $message->body = $validated['message'];
         $message->phone_number = $validated['phone_number'] ?? null;
+        $message->voice_memo_path = $validated['voice_memo_path'] ?? null;
+        $message->transcript = $validated['transcript'] ?? null;
         $message->save();
 
         return redirect()->back()->with('success', 'Your message has been sent successfully! ' . $user->first_name . ' will get back to you soon.');
+    }
+
+    public function uploadVoiceMemo(Request $request)
+    {
+        $request->validate([
+            'voice_memo' => 'required|mimes:ogg,mp3,wav',
+        ]);
+
+        $path = $request->file('voice_memo')->store('voice-memos', 'public');
+
+        return response()->json(['path' => $path]);
+    }
+
+    public function show($id)
+    {
+        $messages = Message::where('id', $id)->orWhere('sender_id', $id)->orWhere('receiver_id', $id)->orderBy('created_at', 'asc')->get();
+
+        return response()->json($messages);
     }
 }

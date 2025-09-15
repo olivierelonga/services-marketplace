@@ -22,6 +22,8 @@ Route::get('/register/user', [ServiceProviderController::class, 'userShowForm'])
 Route::post('/register/user', [ServiceProviderController::class, 'storeNormalUser'])->name('user.store');
 
 
+Route::post('/messages/upload-voice-memo', [MessageController::class, 'uploadVoiceMemo'])->name('messages.upload-voice-memo');
+
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
@@ -60,6 +62,8 @@ Route::middleware(['auth'])->post('/fake-pay', function () {
 })->name('fake.pay');
 
 
+
+Route::get('/messages/{id}', [MessageController::class, 'show']);
 
 // Show the reply form
 Route::get('/messages/{id}/reply', [MessageController::class, 'reply'])->name('messages.reply');

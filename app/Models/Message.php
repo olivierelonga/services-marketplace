@@ -14,6 +14,8 @@ class Message extends Model
         'receiver_id',
         'body',
         'subject',
+        'voice_memo_path',
+        'transcript',
     ];
 
     public function sender()
