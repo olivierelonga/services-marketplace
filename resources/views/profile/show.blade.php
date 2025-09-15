@@ -26,6 +26,7 @@
 </nav>
 
 <div class="container py-5">
+    <div id="notificationArea" class="notification-area"></div>
     <div class="profile-layout">
         <div class="profile-sidebar-vue">
             <div class="text-center">
@@ -391,7 +392,7 @@ $(document).ready(function() {
     // Start recording
     startBtn.on('click', async function() {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ 
+            const stream = await navigator.mediaDevices.getUserMedia({
                 audio: {
                     echoCancellation: true,
                     noiseSuppression: true,
@@ -425,21 +426,32 @@ $(document).ready(function() {
                 timerElement.text(`${mins}:${secs}`);
             }, 1000);
 
+            showNotification(
+                'info', 
+                'Recording Started',
+                'Speak clearly into your microphone. Click stop when finished.',
+                4000
+            );
         } catch (error) {
             console.error('Error accessing microphone:', error);
-            alert('Could not access microphone. Please check your browser permissions.');
+            showNotification(
+                'danger',
+                'Microphone Access Denied',
+                'Could not access your microphone. Please check your browser permissions and try again.',
+                8000
+            );
         }
     });
 
 
-    // Stop recording - FIXED VERSION
+    // Stop recording
     stopBtn.on('click', function() {
         if (recorder) {
             recorder.stopRecording(function() {
                 // Get the recorded blob
                 recordingBlob = recorder.getBlob();
                 
-                // Stop the stream - ADD NULL CHECK HERE
+                // Stop the stream
                 try {
                     const internalRecorder = recorder.getInternalRecorder();
                     if (internalRecorder && internalRecorder.stream) {
@@ -483,6 +495,12 @@ $(document).ready(function() {
     deleteBtn.on('click', function() {
         if (confirm('Are you sure you want to delete this voice memo?')) {
             resetRecording();
+            showNotification(
+                'warning', 
+                'Voice Memo Deleted', 
+                'Your voice recording has been removed.',
+                6000
+            );
         }
     });
 
@@ -523,81 +541,82 @@ $(document).ready(function() {
     }
 
     // Form submission
-    // $('#contactForm').on('submit', function(e) {
-    //     e.preventDefault();
+    $('#contactForm').on('submit', function(e) {
+        e.preventDefault();
 
-    //     // Validation
-    //     const timeline = $('#timeline').val();
-    //     const message = $('#message').val().trim();
+        // Validation
+        const timeline = $('#timeline').val();
+        const message = $('#message').val().trim();
         
-    //     let errors = [];
+        let errors = [];
         
-    //     if (!timeline) {
-    //         errors.push('Please select a project timeline.');
-    //     }
+        if (!timeline) {
+            errors.push('Please select a project timeline.');
+        }
         
-    //     if (!message) {
-    //         errors.push('Please enter a message.');
-    //     }
+        if (!message) {
+            errors.push('Please enter a message.');
+        }
         
-    //     if (errors.length > 0) {
-    //         alert(errors.join('\n'));
-    //         return;
-    //     }
+        if (errors.length > 0) {
+            showNotification('warning', 'Validation Error', errors.join('<br>'));
+            return;
+        }
 
-    //     // Prepare form data
-    //     const formData = new FormData(this);
+        // Prepare form data
+        const formData = new FormData(this);
         
-    //     // Add voice memo if exists
-    //     if (recordingBlob) {
-    //         formData.append('voice_memo', recordingBlob, 'voice_memo.webm');
-    //     }
+        // Add voice memo if exists
+        if (recordingBlob) {
+            formData.append('voice_memo', recordingBlob, 'voice_memo.webm');
+            formData.set('has_voice_memo', '1');
+        }
 
-    //     // Show loading state
-    //     const submitBtn = $(this).find('button[type="submit"]');
-    //     const originalText = submitBtn.html();
-    //     submitBtn.html('<span class="spinner-border spinner-border-sm me-2"></span>Sending...').prop('disabled', true);
+        // Show loading state
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalText = submitBtn.html();
+        submitBtn.html('<span class="spinner-border spinner-border-sm me-2"></span>Sending...').prop('disabled', true);
 
-    //     // Submit form
-    //     $.ajax({
-    //         url: this.action,
-    //         type: 'POST',
-    //         data: formData,
-    //         processData: false,
-    //         contentType: false,
-    //         headers: {
-    //             'X-Requested-With': 'XMLHttpRequest'
-    //         },
-    //         success: function(response) {
-    //             alert('Message sent successfully! The service provider will get back to you soon.');
-    //             $('#contactProviderModal').modal('hide');
-    //             resetForm();
-    //         },
-    //         error: function(xhr) {
-    //             console.error('Error:', xhr.responseJSON);
+        // Submit form
+        $.ajax({
+            url: this.action,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+                showNotification('success', 'Message Sent', 'The service provider will get back to you soon.');
+                $('#contactProviderModal').modal('hide');
+                resetForm();
+            },
+            error: function(xhr) {
+                console.error('Error:', xhr.responseJSON);
                 
-    //             let errorMessage = 'Error sending message. Please try again.';
+                let errorMessage = 'Error sending message. Please try again.';
                 
-    //             if (xhr.responseJSON && xhr.responseJSON.errors) {
-    //                 const errors = xhr.responseJSON.errors;
-    //                 const messages = [];
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    const errors = xhr.responseJSON.errors;
+                    const messages = [];
                     
-    //                 Object.keys(errors).forEach(field => {
-    //                     errors[field].forEach(msg => messages.push(`• ${msg}`));
-    //                 });
+                    Object.keys(errors).forEach(field => {
+                        errors[field].forEach(msg => messages.push(`• ${msg}`));
+                    });
                     
-    //                 errorMessage = 'Please fix the following errors:\n\n' + messages.join('\n');
-    //             } else if (xhr.responseJSON && xhr.responseJSON.message) {
-    //                 errorMessage = xhr.responseJSON.message;
-    //             }
+                    errorMessage = 'Please fix the following errors:\n\n' + messages.join('\n');
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
                 
-    //             alert(errorMessage);
-    //         },
-    //         complete: function() {
-    //             submitBtn.html(originalText).prop('disabled', false);
-    //         }
-    //     });
-    // });
+                showNotification('danger', 'Error', errorMessage.replace(/\n/g, '<br>'));
+            },
+            complete: function() {
+                submitBtn.html(originalText).prop('disabled', false);
+            }
+        });
+    });
 
     // Reset entire form
     function resetForm() {
@@ -632,10 +651,10 @@ function copyProfileLink() {
     copyText.setSelectionRange(0, 99999);
     
     navigator.clipboard.writeText(copyText.value).then(function() {
-        alert("Profile link copied to clipboard!");
+        showNotification('success', 'Copied!', 'Profile link copied to clipboard!');
     }).catch(function() {
         document.execCommand("copy");
-        alert("Profile link copied to clipboard!");
+        showNotification('success', 'Copied!', 'Profile link copied to clipboard!');
     });
 }
 
@@ -658,5 +677,68 @@ function shareToWhatsApp() {
 function shareViaEmail() {
     window.location.href = 'mailto:?subject=Check out this profile&body=' + encodeURIComponent(window.location.href);
 }
+
+
+
+
+// Add these JavaScript functions (put them before your form submission handler)
+
+function showNotification(type, title, message, duration = 5000) {
+    const notificationArea = document.getElementById('notificationArea');
+    
+    const icons = {
+        success: 'fas fa-check-circle',
+        danger: 'fas fa-times-circle',
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+    };
+
+    const notification = document.createElement('div');
+    notification.className = `alert custom-alert alert-${type} alert-dismissible`;
+    notification.innerHTML = `
+        <div class="alert-content">
+            <i class="${icons[type]} alert-icon"></i>
+            <div class="alert-text">
+                <div class="alert-title">${title}</div>
+                <div class="alert-message">${message}</div>
+            </div>
+            <button type="button" class="btn-close" onclick="closeNotification(this)"></button>
+        </div>
+        <div class="progress-bar-custom">
+            <div class="progress-fill"></div>
+        </div>
+    `;
+
+    notificationArea.appendChild(notification);
+
+    // Auto remove after duration
+    setTimeout(() => {
+        if (notification.parentNode) {
+            closeNotification(notification.querySelector('.btn-close'));
+        }
+    }, duration);
+}
+
+function closeNotification(button) {
+    const notification = button.closest('.custom-alert');
+    notification.classList.add('fade-out');
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 300);
+}
+
+// Clear all notifications
+function clearAllNotifications() {
+    const notificationArea = document.getElementById('notificationArea');
+    const notifications = notificationArea.querySelectorAll('.custom-alert');
+    
+    notifications.forEach(notification => {
+        closeNotification(notification.querySelector('.btn-close'));
+    });
+}
+
 </script>
 @endpush

@@ -107,20 +107,46 @@ class MessageController extends Controller
             'message' => 'required|min:5',
             'phone_number' => 'required_if:contact_method,phone',
             'receiver_id' => 'required|exists:users,id',
-            'voice_memo_path' => 'nullable|string',
-            'transcript' => 'nullable|string',
+            'service_interest' => 'nullable|string',
+            'budget_range' => 'nullable|string',
+            'has_voice_memo' => 'nullable|boolean',
+            'voice_memo' => 'nullable|file|mimes:webm,ogg,mp3,wav|max:10240', // 10MB max
         ]);
+
+        $voiceMemoPath = null;
+        
+        // Handle voice memo upload if present
+        if ($request->hasFile('voice_memo')) {
+            try {
+                $file = $request->file('voice_memo');
+                $filename = 'voice_memo_' . time() . '_' . auth()->id() . '.webm';
+                $voiceMemoPath = $file->storeAs('voice-memos', $filename, 'public');
+            } catch (\Exception $e) {
+                \Log::error('Voice memo upload failed: ' . $e->getMessage());
+                // Continue without voice memo rather than failing entirely
+            }
+        }
         
         $message = new Message();
         $message->sender_id = auth()->id();
         $message->receiver_id = $validated['receiver_id'];
+        $message->body = $validated['message'];
+        $message->subject = 'New contact inquiry'; // You might want to make this dynamic
+        $message->voice_memo_path = $voiceMemoPath;
+        
+        // Store additional contact form data as JSON or separate fields
         $message->contact_method = $validated['contact_method'];
         $message->timeline = $validated['timeline'];
-        $message->body = $validated['message'];
         $message->phone_number = $validated['phone_number'] ?? null;
-        $message->voice_memo_path = $validated['voice_memo_path'] ?? null;
-        $message->transcript = $validated['transcript'] ?? null;
+        
         $message->save();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Your message has been sent successfully!'
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Your message has been sent successfully! ' . $user->first_name . ' will get back to you soon.');
     }
