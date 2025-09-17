@@ -1,0 +1,189 @@
+body{
+    margin-top:20px;
+    background:#eee;
+}
+.profile-header {
+    position: relative;
+    overflow: hidden
+}
+
+.profile-header .profile-header-cover {
+    background-image: url(https://bootdey.com/img/Content/bg1.jpg);
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    content: '';
+    z-index: 1
+}
+
+.profile-header .profile-header-cover:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,.75) 100%)
+}
+
+.profile-header .profile-header-content {
+    color: #fff;
+    padding: 25px;
+    position: relative;
+    z-index: 10
+}
+
+.profile-header .profile-header-img {
+    float: left;
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+    border: 5px solid #fff;
+    border-radius: 4px;
+    background: #fff
+}
+
+.profile-header .profile-header-info h4 {
+    font-weight: 500;
+    color: #fff
+}
+
+.profile-header .profile-header-info p {
+    font-size: 12px;
+    margin-top: 5px;
+    margin-bottom: 0
+}
+
+.profile-header-info {
+    margin-left: 140px
+}
+
+.profile-header-img+.profile-header-info {
+    margin-left: 140px
+}
+
+.profile-header .profile-header-btn {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    z-index: 10
+}
+
+.profile-content {
+    padding: 25px;
+    border-radius: 4px
+}
+
+.profile-content:after,.profile-content:before {
+    content: '';
+    display: table;
+    clear: both
+}
+
+.profile-content .tab-content,.profile-content .tab-pane {
+    background: 0 0
+}
+
+.profile-left {
+    width: 200px;
+    float: left
+}
+
+.profile-right {
+    margin-left: 220px;
+    padding-right: 25px
+}
+
+.profile-right .profile-info {
+    background: #fff;
+    padding: 15px
+}
+
+.profile-right .profile-info h5 {
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px
+}
+
+.profile-right .profile-info p {
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 0
+}
+
+.search-result-list {
+    margin-top: 25px
+}
+
+.search-result-list .search-result-item {
+    background: #fff;
+    border-radius: 4px;
+    margin-bottom: 15px
+}
+
+.search-result-list .search-result-item .search-result-media {
+    width: 100px;
+    height: 100px;
+    display: block;
+    float: left;
+    overflow: hidden
+}
+
+.search-result-list .search-result-item .search-result-media img {
+    max-width: 100%
+}
+
+.search-result-list .search-result-item .search-result-info {
+    margin-left: 115px;
+    padding: 15px
+}
+
+.search-result-list .search-result-item .search-result-info h5 {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 5px
+}
+
+.search-result-list .search-result-item .search-result-info p {
+    font-size: 12px;
+    margin-bottom: 5px
+}
+
+.search-result-list .search-result-item .search-result-info .search-result-meta {
+    font-size: 12px;
+    color: #999
+}
+
+.search-result-list .search-result-item .search-result-info .search-result-meta span {
+    margin-right: 15px
+}
+
+.search-result-list .search-result-item .search-result-price {
+    float: right;
+    font-size: 24px;
+    font-weight: 500;
+    color: #00acac
+}
+
+@media (max-width: 767px) {
+    .profile-left {
+        float:none;
+        width: auto
+    }
+
+    .profile-right {
+        margin-left: 0;
+        padding-right: 0
+    }
+
+    .search-result-list .search-result-item .search-result-price {
+        float: none;
+        display: block;
+        margin-top: 10px
+    }
+}

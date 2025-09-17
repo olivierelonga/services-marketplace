@@ -30,7 +30,7 @@
     <div class="profile-layout">
         <div class="profile-sidebar-vue">
             <div class="text-center">
-                @if ($user->profile_picture_url)
+                @if ($user->profile_picture)
                     <img src="{{ $user->profile_picture_url }}" alt="Profile Picture" class="profile-picture-vue">
                 @else
                     <div class="bg-primary d-flex align-items-center justify-content-center profile-picture-vue mx-auto">
@@ -118,7 +118,7 @@
                     <div class="row">
                         <div class="col-md-6 d-flex flex-column justify-content-center align-items-center bg-light p-5">
                             <div class="text-center">
-                                <img src="{{ $user->profile_picture_url ?? 'https://i.pravatar.cc/150?u=' . $user->id }}" alt="Profile Picture" class="img-fluid rounded-circle mb-4" style="width: 150px; height: 150px; object-fit: cover;">
+                                <img src="{{ $user->profile_picture_url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-4" style="width: 150px; height: 150px; object-fit: cover;">
                                 <h2 class="fw-bold mb-3">{{ $user->first_name }} {{ $user->last_name }}</h2>
                                 <p class="text-muted mb-4">{{ $user->email }}</p>
                                 <div class="d-flex justify-content-center gap-4">

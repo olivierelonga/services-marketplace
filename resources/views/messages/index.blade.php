@@ -25,7 +25,7 @@
                 <a href="#" class="list-group-item list-group-item-action border-0 p-3 conversation-item" data-conversation-id="{{ $message->id }}">
                     <div class="d-flex w-100 justify-content-between">
                         <h6 class="mb-1">{{ $message->sender_name }}</h6>
-                        <small>{{ $message->created_at->diffForHumans() }}</small>
+                        <small>{{ \Carbon\Carbon::parse($message->created_at)->diffForHumans() }}</small>
                     </div>
                     <p class="mb-1 text-muted text-truncate">{{ $message->body }}</p>
                 </a>
