@@ -110,7 +110,7 @@
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h5 class="modal-title">Contact {{ $user->first_name }}</h5>
+                <h5 class="modal-title">{{ $user->first_name }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0">
@@ -139,31 +139,23 @@
                                 @csrf
                                 <input type="hidden" name="receiver_id" value="{{$user->id}}">
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="contact_method_email" class="form-label">Contact Method</label>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="contact_method" id="contact_method_email" value="email" checked>
-                                            <label class="form-check-label" for="contact_method_email">Email</label>
-                                        </div>
+                                    <div class="mb-3 col-md-6" style="display: block;">
+                                        <label for="phone_number" class="form-label">Phone Number</label>
+                                        <input type="tel" name="phone_number" id="phone_number" class="form-control form-control-lg" placeholder="Your Phone Number">
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="contact_method_phone" class="form-label">&nbsp;</label>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="contact_method" id="contact_method_phone" value="phone">
-                                            <label class="form-check-label" for="contact_method_phone">Phone</label>
-                                        </div>
+
+                                    <div class="mb-3 col-md-6" style="display: block;">
+                                        <label for="email_address" class="form-label">Email Address</label>
+                                        <input type="email" name="email_address" id="email_address" class="form-control form-control-lg" placeholder="Your Email Address">
                                     </div>
                                 </div>
-                                <div class="mb-3" id="phoneField" style="display: none;">
-                                    <label for="phone_number" class="form-label">Phone Number</label>
-                                    <input type="tel" name="phone_number" id="phone_number" class="form-control form-control-lg" placeholder="Your Phone Number">
-                                </div>
+
                                 <div class="mb-3">
                                     <label for="service_interest" class="form-label">Service of Interest</label>
                                     <select name="service_interest" id="service_interest" class="form-select form-select-lg">
                                         <option value="">Select a service</option>
                                         @foreach($user->services as $service)
-                                            <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                            <option value="{{ $service->name }}">{{ $service->name }}</option>
                                         @endforeach
                                         <option value="other">Other</option>
                                     </select>
@@ -184,12 +176,12 @@
                                         <label for="budget_range" class="form-label">Budget Range</label>
                                         <select name="budget_range" id="budget_range" class="form-select form-select-lg">
                                             <option value="">Select a budget</option>
-                                            <option value="under_500">Under R500</option>
-                                            <option value="500_1000">R500 - R1,000</option>
-                                            <option value="1000_2500">R1,000 - R2,500</option>
-                                            <option value="2500_5000">R2,500 - R5,000</option>
-                                            <option value="5000_10000">R5,000 - R10,000</option>
-                                            <option value="over_10000">Over R10,000</option>
+                                            <option value="Under R500">Under R500</option>
+                                            <option value="R500 - R1,000">R500 - R1,000</option>
+                                            <option value="R1,000 - R2,500">R1,000 - R2,500</option>
+                                            <option value="R2,500 - R5,000">R2,500 - R5,000</option>
+                                            <option value="R5,000 - R10,000">R5,000 - R10,000</option>
+                                            <option value="Over R10,000">Over R10,000</option>
                                         </select>
                                     </div>
                                 </div>
@@ -353,9 +345,6 @@
 <script>
 $(document).ready(function() {
     // Form elements
-    const phoneField = $('#phoneField');
-    const contactEmail = $('#contact_method_email');
-    const contactPhone = $('#contact_method_phone');
     const hasVoiceMemoInput = $('#has_voice_memo');
     
     // Voice recording elements
@@ -375,19 +364,6 @@ $(document).ready(function() {
     let recordingBlob = null;
     let timerInterval = null;
     let recordingStartTime = null;
-
-    // Contact method toggle
-    contactEmail.on('change', function() {
-        if ($(this).is(':checked')) {
-            phoneField.hide();
-        }
-    });
-
-    contactPhone.on('change', function() {
-        if ($(this).is(':checked')) {
-            phoneField.show();
-        }
-    });
 
     // Start recording
     startBtn.on('click', async function() {
@@ -621,8 +597,6 @@ $(document).ready(function() {
     // Reset entire form
     function resetForm() {
         $('#contactForm')[0].reset();
-        phoneField.hide();
-        contactEmail.prop('checked', true);
         resetRecording();
     }
 

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('assets/css/profile-vue-inspired.css') }}">
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
     <div class="container">
@@ -33,10 +34,7 @@
                         <div class="row align-items-center">
                             <div class="col-md-3 text-center">
                                 @if ($user->profile_picture_url)
-                                    <img src="{{ $user->profile_picture_url }}" 
-                                         alt="Profile Picture" 
-                                         class="img-thumbnail rounded-circle" 
-                                         width="150">
+                                    <img src="{{ $user->profile_picture_url }}" alt="Profile Picture" class="img-thumbnail rounded-circle" width="150">
                                 @else
                                     <i class="fas fa-user-circle fa-8x text-muted"></i>
                                 @endif

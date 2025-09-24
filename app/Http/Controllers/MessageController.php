@@ -102,10 +102,10 @@ class MessageController extends Controller
     {
         // Validate incoming request
         $validated = $request->validate([
-            'contact_method' => 'required|in:email,phone',
+            'email_address' => 'email',
             'timeline' => 'required',
             'message' => 'required|min:5',
-            'phone_number' => 'required_if:contact_method,phone',
+            'phone_number' => 'required:phone',
             'receiver_id' => 'required|exists:users,id',
             'service_interest' => 'nullable|string',
             'budget_range' => 'nullable|string',
@@ -135,9 +135,12 @@ class MessageController extends Controller
         $message->voice_memo_path = $voiceMemoPath;
         
         // Store additional contact form data as JSON or separate fields
-        $message->contact_method = $validated['contact_method'];
+        $message->email_address = $validated['email_address'];
         $message->timeline = $validated['timeline'];
         $message->phone_number = $validated['phone_number'] ?? null;
+        $message->service_interest = $validated['service_interest'];
+        $message->budget_range = $validated['budget_range'];
+
         
         $message->save();
 

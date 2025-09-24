@@ -46,7 +46,7 @@ class ServiceProviderController extends Controller
             //'city'                => 'required|string|max:255',
             //'province'            => 'required|string|max:255',
             //'postal_code'         => 'required|string|max:20',
-            'profile_picture'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'profile_picture'     => 'nullable|image|mimes:jpg,jpeg,png|max:10240'
         ]);
 
         $whatsappNumb = $request->input('whatsapp_number');
@@ -64,7 +64,7 @@ class ServiceProviderController extends Controller
         $profilePicturePath = null;
         if ($request->hasFile('profile_picture')) {
             $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $profilePicturePath = basename($path);
+            $profilePicturePath = basename($path); // keep full path for retrieval
         }
 
 

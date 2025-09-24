@@ -38,10 +38,6 @@
 
         <!-- Message Viewer Pane -->
         <div class="col-md-8 col-lg-9 d-flex flex-column" id="message-viewer">
-            <div class="p-3 border-bottom d-flex align-items-center" id="message-viewer-header" style="display: none;">
-                <img src="" alt="" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                <h5 class="mb-0"></h5>
-            </div>
             <div class="flex-grow-1 p-4 overflow-auto" id="message-history">
                 <div class="text-center text-muted" id="select-conversation-prompt">
                     <i class="bi bi-chat-dots-fill fs-1"></i>

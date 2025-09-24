@@ -16,6 +16,8 @@ class Message extends Model
         'subject',
         'voice_memo_path',
         'transcript',
+        'service_interest',
+        'budget_range',
     ];
 
     public function sender()

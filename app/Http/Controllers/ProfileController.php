@@ -32,15 +32,13 @@ class ProfileController extends Controller
             'gender'              => 'nullable|in:male,female,other',
             'password'            => 'nullable|string|min:6|confirmed',
             'hourly_rate'         => 'nullable|numeric|min:0',
-            'profile_picture'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'profile_picture'     => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
             'whatsapp_number'     => 'nullable|string',
             'same_whatsapp_number' => 'nullable|boolean',
         ]);
 
         // Handle WhatsApp Number
-        $validated['whatsapp_number'] = $request->has('same_whatsapp_number') 
-            ? $validated['phone'] 
-            : $validated['whatsapp_number'];
+        $validated['whatsapp_number'] = $request->has('same_whatsapp_number') ? $validated['phone'] : $validated['whatsapp_number'];
 
         // Handle Profile Picture Upload
         if ($request->hasFile('profile_picture')) {
