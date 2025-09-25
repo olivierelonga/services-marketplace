@@ -54,3 +54,12 @@
 .message.received .message-time {
     align-self: flex-start;
 }
+
+.conversation-item:hover {
+    background-color: #f8f9fa;
+}
+
+.conversation-item .badge {
+    font-size: 0.75em;
+    padding: 0.4em 0.7em;
+}

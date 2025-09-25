@@ -64,7 +64,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const conversationItems = document.querySelectorAll('.conversation-item');
         const messageViewer = document.getElementById('message-viewer');
-        const messageViewerHeader = document.getElementById('message-viewer-header');
+        //const messageViewerHeader = document.getElementById('message-viewer-header');
         const messageHistory = document.getElementById('message-history');
         const messageInputForm = document.getElementById('message-input-form');
         const selectConversationPrompt = document.getElementById('select-conversation-prompt');
@@ -80,14 +80,14 @@
 
                 // Show the message viewer
                 selectConversationPrompt.style.display = 'none';
-                messageViewerHeader.style.display = 'flex';
+                //messageViewerHeader.style.display = 'flex';
                 messageInputForm.style.display = 'block';
 
                 // Update header
                 const senderName = this.querySelector('h6').textContent;
                 const avatarUrl = `https://i.pravatar.cc/50?u=${this.dataset.conversationId}`;
-                messageViewerHeader.querySelector('img').src = avatarUrl;
-                messageViewerHeader.querySelector('h5').textContent = senderName;
+                //messageViewerHeader.querySelector('img').src = avatarUrl;
+                //messageViewerHeader.querySelector('h5').textContent = senderName;
 
                 // Clear previous messages
                 messageHistory.innerHTML = '';
