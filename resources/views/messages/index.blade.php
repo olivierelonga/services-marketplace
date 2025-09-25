@@ -4,8 +4,8 @@
 <link rel="stylesheet" href="{{ asset('assets/css/messages.css') }}">
 
 <div class="container-fluid vh-100 d-flex flex-column p-0">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+        <div class="container">
             <a class="navbar-brand fw-bold text-primary" href="{{ url('/') }}">yelp</a>
             <div class="ms-auto d-flex align-items-center">
                 <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary me-2">Dashboard</a>
@@ -22,7 +22,7 @@
                 <h4 class="mb-0">Inbox</h4>
             </div>
             @forelse ($messages as $message)
-                <a href="#" class="list-group-item list-group-item-action border-0 p-3 conversation-item" data-conversation-id="{{ $message->id }}">
+                <a href="#" class="list-group-item list-group-item-action p-3 conversation-item" data-conversation-id="{{ $message->id }}">
                     <div class="d-flex w-100 justify-content-between">
                         <h6 class="mb-1">{{ $message->sender_name }}</h6>
                         <small>{{ \Carbon\Carbon::parse($message->created_at)->diffForHumans() }}</small>

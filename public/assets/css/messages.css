@@ -1,7 +1,14 @@
 /* Messages Page CSS */
 
+.conversation-item {
+    background-color: #ffffff;
+    transition: background-color 0.3s ease;
+    border: 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
 .conversation-item.active {
-    background-color: #e9ecef;
+    background-color: #e6f2ff; /* A light blue for active state */
 }
 
 #message-history {
@@ -56,10 +63,14 @@
 }
 
 .conversation-item:hover {
-    background-color: #f8f9fa;
+    background-color: #f0f8ff; /* A very light blue on hover */
 }
 
 .conversation-item .badge {
     font-size: 0.75em;
     padding: 0.4em 0.7em;
+}
+
+.conversation-item:last-child {
+    border-bottom: 0;
 }
