@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 
 class MessageController extends Controller
@@ -28,75 +29,67 @@ class MessageController extends Controller
     public function index(Request $request)
     {
         $userId = auth()->id();
-        $perPage = 10;
-        $page = $request->get('page', 1);
-        // $offset = ($page - 1) * $perPage;   
-        $userId = auth()->id();
 
-        $sql = <<<SQL
-            SELECT 
-                m.id,
-                m.body, 
-                CONCAT(u.first_name, ' ', u.last_name) AS sender_name, 
-                u.email,
-                u.phone,
-                u.is_premium,
-                m.created_at,
-                m.subject
-            FROM messages m
-            INNER JOIN users u ON m.sender_id = u.id
-            WHERE m.receiver_id = ?
-            ORDER BY m.created_at DESC
-    SQL;
+        // Get all messages involving the current user
+        $allMessages = Message::where('sender_id', $userId)
+                            ->orWhere('receiver_id', $userId)
+                            ->orderBy('created_at', 'desc')
+                            ->get();
 
-        $messages = DB::select($sql, [$userId]);
+        // Group messages by the other participant
+        $conversations = $allMessages->groupBy(function ($message) use ($userId) {
+            return $message->sender_id == $userId ? $message->receiver_id : $message->sender_id;
+        });
 
-        // Get total count
-        $total = DB::table('messages')->where('receiver_id', $userId)->count();
-
-        // Create paginator
-        $paginator = new LengthAwarePaginator(
-            $messages,
-            $total,
-            $perPage,
-            $page,
-            ['path' => url()->current()]
-        );
+        // Get the most recent message from each conversation
+        $latestMessages = $conversations->map(function ($group) {
+            return $group->first();
+        });
 
         $unreadCount = Message::where('receiver_id', $userId)->where('is_read', false)->count();
 
-        return view('messages.index', ['messages' => $paginator, 'unreadCount' => $unreadCount]);
-    }
-
-    public function reply($id)
-    {
-        #get full_name and from users table where id sender_id = $ 
-        $message = Message::findOrFail($id);
-
-        if (!$message->is_read) {
-            $message->is_read = true;
-            $message->save();
+        // Load relationships and construct sender_name for the view
+        $latestMessages->load('sender', 'receiver');
+        foreach ($latestMessages as $message) {
+            if ($message->sender_id == $userId) {
+                $otherUser = $message->receiver;
+                $message->body = 'You: ' . $message->body;
+            } else {
+                $otherUser = $message->sender;
+            }
+            $message->sender_name = $otherUser->first_name . ' ' . $otherUser->last_name;
         }
 
-        return view('messages.reply', compact('message'));
+        return view('messages.index', [
+            'messages' => $latestMessages, 
+            'unreadCount' => $unreadCount
+        ]);
     }
 
-    public function sendReply(Request $request, $id)
+    public function reply(Request $request, $id)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'reply_body' => 'required|string',
         ]);
 
-        $original = Message::findOrFail($id);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        // Send mail
-        Mail::raw($request->reply_body, function ($mail) use ($original) {
-            $mail->to($original->email)
-                ->subject('Re: Your message to us');
-        });
+        $originalMessage = Message::findOrFail($id);
 
-        return redirect()->route('messages.index')->with('success', 'Reply sent successfully.');
+        $reply = new Message();
+        $reply->sender_id = auth()->id();
+        $reply->receiver_id = $originalMessage->sender_id;
+        $reply->body = $request->input('reply_body');
+        $reply->subject = 'Re: ' . $originalMessage->subject;
+        $reply->email_address = auth()->user()->email;
+        $reply->timeline = $originalMessage->timeline;
+        $reply->save();
+
+        return response()->json($reply);
     }
+
 
     public function store(Request $request, User $user)
     {
@@ -167,7 +160,18 @@ class MessageController extends Controller
 
     public function show($id)
     {
-        $messages = Message::where('id', $id)->orWhere('sender_id', $id)->orWhere('receiver_id', $id)->orderBy('created_at', 'asc')->get();
+        $message = Message::findOrFail($id);
+
+        $user1 = $message->sender_id;
+        $user2 = $message->receiver_id;
+
+        $messages = Message::where(function ($query) use ($user1, $user2) {
+            $query->where('sender_id', $user1)
+                  ->where('receiver_id', $user2);
+        })->orWhere(function ($query) use ($user1, $user2) {
+            $query->where('sender_id', $user2)
+                  ->where('receiver_id', $user1);
+        })->orderBy('created_at', 'asc')->get();
 
         return response()->json($messages);
     }

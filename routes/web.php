@@ -66,13 +66,9 @@ Route::middleware(['auth'])->post('/fake-pay', function () {
 Route::get('/messages/{id}', [MessageController::class, 'show']);
 
 // Show the reply form
-Route::get('/messages/{id}/reply', [MessageController::class, 'reply'])->name('messages.reply');
-
-// Handle the reply submission
-Route::post('/messages/{id}/reply', [MessageController::class, 'sendReply'])->name('messages.sendReply');
+Route::post('/messages/{id}/reply', [MessageController::class, 'reply'])->name('messages.reply');
 
 Route::get('/service-suggestions', [ServiceSearchController::class, 'suggest']);
-// Route::get('/services/providers', [ServiceProviderController::class, 'showProviders']);
 
 
 Route::get('/search', [ServiceSearchController::class, 'index'])->name('search');

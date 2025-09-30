@@ -74,3 +74,15 @@
 .conversation-item:last-child {
     border-bottom: 0;
 }
+
+/* Style for replies sent by the user */
+.message.sent.reply {
+    align-self: flex-start; /* Move replies to the left side */
+}
+
+.message.sent.reply .message-bubble {
+    background-color: #cce5ff; /* A very light blue, distinct from received gray */
+    color: #212529; /* Dark text for readability on light background */
+    border-top-left-radius: 0; /* Adjust bubble shape for left alignment */
+    border-top-right-radius: 1rem;
+}
