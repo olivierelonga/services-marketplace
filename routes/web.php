@@ -11,6 +11,8 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Api\ServiceSearchController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\TranslationController;
+use App\Http\Controllers\TranscriptionController;
 
 
 Route::view('/', 'pages.home')->name('home');
@@ -99,3 +101,6 @@ Route::middleware(['auth'])->group(function () {
     // Archive contact
     Route::patch('/contacts/{contact}/archive', [MessageController::class, 'archive'])->name('contacts.archive');
 });
+
+Route::post('/messages/{id}/translate', [TranslationController::class, 'translate'])->name('messages.translate');
+Route::post('/messages/{id}/transcribe', [TranscriptionController::class, 'transcribe'])->name('messages.transcribe');

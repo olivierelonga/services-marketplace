@@ -140,14 +140,27 @@
 
         function appendMessage(msg) {
             const messageElement = document.createElement('div');
+            messageElement.dataset.messageId = msg.id;
             messageElement.classList.add('message', msg.sender_id === {{ auth()->id() }} ? 'sent' : 'received');
             
-            let messageContent = `<div class="message-bubble">${msg.body}</div>`;
+            let messageContent = `<div class="message-bubble">
+                                    <p>${msg.body}</p>
+                                    <div class="translation-controls">
+                                        <button class="btn btn-sm btn-outline-secondary translate-btn">Translate</button>
+                                        <div class="language-dropdown" style="display: none;">
+                                            <a href="#" data-lang="zu">Zulu</a>
+                                            <a href="#" data-lang="xh">Xhosa</a>
+                                            <a href="#" data-lang="fr">French</a>
+                                        </div>
+                                    </div>
+                                    <div class="translated-message mt-2"></div>
+                                </div>`;
 
             if (msg.voice_memo_path) {
                 messageContent += `
                     <div class="message-bubble mt-2">
                         <audio controls src="/storage/${msg.voice_memo_path}"></audio>
+                        <button class="btn btn-sm btn-outline-secondary transcribe-btn mt-2">Transcribe</button>
                         <div class="transcript mt-2">${msg.transcript || ''}</div>
                     </div>
                 `;
@@ -157,6 +170,67 @@
             messageHistory.appendChild(messageElement);
             messageHistory.scrollTop = messageHistory.scrollHeight;
         }
+
+        messageHistory.addEventListener('click', function(e) {
+            if (e.target.classList.contains('translate-btn')) {
+                const dropdown = e.target.nextElementSibling;
+                dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+            }
+
+            if (e.target.matches('.language-dropdown a')) {
+                e.preventDefault();
+                const messageElement = e.target.closest('.message');
+                const messageId = messageElement.dataset.messageId;
+                const targetLanguage = e.target.dataset.lang;
+                const translatedMessageContainer = messageElement.querySelector('.translated-message');
+
+                $.ajax({
+                    url: `/messages/${messageId}/translate`,
+                    type: 'POST',
+                    data: {
+                        target_language: targetLanguage,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        translatedMessageContainer.textContent = response.translated_text;
+                        e.target.closest('.language-dropdown').style.display = 'none';
+
+                        if (response.translated_audio_path) {
+                            const audioPlayer = document.createElement('audio');
+                            audioPlayer.controls = true;
+                            audioPlayer.src = response.translated_audio_path;
+                            translatedMessageContainer.appendChild(audioPlayer);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error(jqXHR.responseJSON); 
+                        console.error('Error translating message:', textStatus, errorThrown);
+                        alert('An error occurred while translating the message.');
+                    }
+                });
+            }
+
+            if (e.target.classList.contains('transcribe-btn')) {
+                const messageElement = e.target.closest('.message');
+                const messageId = messageElement.dataset.messageId;
+                const transcriptContainer = messageElement.querySelector('.transcript');
+
+                $.ajax({
+                    url: `/messages/${messageId}/transcribe`,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        transcriptContainer.textContent = response.transcript;
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error transcribing message:', textStatus, errorThrown);
+                        alert('An error occurred while transcribing the message.');
+                    }
+                });
+            }
+        });
     });
 </script>
 @endpush
