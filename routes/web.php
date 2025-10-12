@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\View\View;
 use App\Http\Controllers\ServiceProviderController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
@@ -13,6 +12,26 @@ use App\Http\Controllers\Api\ServiceSearchController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\TranscriptionController;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/provider/dashboard', [ServiceProviderController::class, 'index'])->name('provider.dashboard');
+
+use App\Http\Controllers\WorkTaskController;
+
+Route::resource('work-tasks', WorkTaskController::class)->middleware(['auth']);
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 
 Route::view('/', 'pages.home')->name('home');

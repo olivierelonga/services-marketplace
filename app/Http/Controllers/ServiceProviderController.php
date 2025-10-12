@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Service;
 use App\Models\User;
+use App\Models\WorkTask;
 use Hash;
 
 use Illuminate\Http\Request;
@@ -10,6 +11,13 @@ use Illuminate\Http\Request;
 class ServiceProviderController extends Controller
 {
     //
+
+    public function index()
+    {
+        $workTasks = WorkTask::where('assigned_to', auth()->id())->latest()->get();
+        return view('dashboard.provider_dashboard', compact('workTasks'));
+    }
+
     public function showRegistrationForm()
     {
         return view('serviceProviders.register');
