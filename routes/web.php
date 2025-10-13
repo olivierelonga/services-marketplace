@@ -21,7 +21,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/provider/dashboard', [ServiceProviderController::class, 'index'])->name('provider.dashboard');
 
 use App\Http\Controllers\WorkTaskController;
 
@@ -49,6 +48,7 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/provider/dashboard', [ServiceProviderController::class, 'index'])->name('provider.dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 

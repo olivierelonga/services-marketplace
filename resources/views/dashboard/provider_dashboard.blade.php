@@ -37,11 +37,14 @@
 <div class="sidebar">
     <h4 class="text-center">Provider Dashboard</h4>
     <hr style="background-color: #fff;">
-    <a href="#">Dashboard</a>
-    <a href="#">Create Job</a>
-    <a href="#">My Jobs</a>
-    <a href="#">Profile</a>
-    <a href="#">Logout</a>
+    <a href="{{ route('provider.dashboard') }}"><i class="fas fa-tachometer-alt card-title-icon"></i>Dashboard</a>
+    <a href="{{ route('work-tasks.create') }}"><i class="fas fa-plus card-title-icon"></i>Create Job</a>
+    <a href="{{ route('provider.dashboard') }}"><i class="fas fa-tasks card-title-icon"></i>My Jobs</a>
+    <a href="{{ route('dashboard') }}"><i class="fas fa-user card-title-icon"></i>Profile</a>
+    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt card-title-icon"></i>Logout</a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
 </div>
 
 <div class="main-content">
@@ -58,7 +61,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table jobs-table" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -76,8 +79,11 @@
                                     <td><span class="badge bg-{{ $task->status == 'completed' ? 'success' : ($task->status == 'in_progress' ? 'warning text-dark' : 'danger') }}">{{ ucfirst(str_replace('_', ' ', $task->status)) }}</span></td>
                                     <td>{{ ucfirst($task->priority) ?? 'N/A' }}</td>
                                     <td>
-                                        <a href="{{ route('work-tasks.show', $task) }}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
-                                        <a href="{{ route('work-tasks.edit', $task) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                                        <a href="{{ route('work-tasks.show', $task) }}" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></a>
+                                        <a href="{{ route('work-tasks.edit', $task) }}" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></a>
+                                        <button type="button" class="btn btn-sm btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="{{ route('work-tasks.destroy', $task) }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             @empty
@@ -92,10 +98,58 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this work task? This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="deleteForm" action="" method="POST">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @push('scripts')
 <style>
+.jobs-table thead th {
+    background-color: #f8f9fc;
+    border-bottom: 2px solid #e3e6f0;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.jobs-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.jobs-table tbody tr:hover {
+    background-color: #f8f9fc;
+}
+
+.jobs-table td, .jobs-table th {
+    vertical-align: middle;
+    padding: 1rem;
+}
+
+.table-responsive {
+    border-radius: 0.35rem;
+}
+
 .notification-area {
     position: fixed;
     top: 80px;
@@ -182,6 +236,14 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const action = button.getAttribute('data-action');
+        const form = document.getElementById('deleteForm');
+        form.setAttribute('action', action);
+    });
+
     @if(session('success'))
         showNotification('success', 'Success', '{{ session('success') }}');
     @endif

@@ -39,8 +39,11 @@
     <a href="{{ route('provider.dashboard') }}"><i class="fas fa-tachometer-alt card-title-icon"></i>Dashboard</a>
     <a href="{{ route('work-tasks.create') }}"><i class="fas fa-plus card-title-icon"></i>Create Job</a>
     <a href="{{ route('provider.dashboard') }}"><i class="fas fa-tasks card-title-icon"></i>My Jobs</a>
-    <a href="#"><i class="fas fa-user card-title-icon"></i>Profile</a>
-    <a href="#"><i class="fas fa-sign-out-alt card-title-icon"></i>Logout</a>
+    <a href="{{ route('dashboard') }}"><i class="fas fa-user card-title-icon"></i>Profile</a>
+    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt card-title-icon"></i>Logout</a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
 </div>
 
 <div class="main-content">
@@ -84,7 +87,7 @@
                             <div class="mb-3"><label for="access_instructions">Access Instructions</label><textarea class="form-control" id="access_instructions" name="access_instructions" rows="2"></textarea></div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg">Create Work Task</button>
+                    {{-- <button type="submit" class="btn btn-primary btn-lg">Create Work Task</button> --}}
                 </div>
 
                 <div class="col-lg-4">
@@ -112,6 +115,16 @@
                             <div class="mb-3">
                                 <label for="photos" class="form-label">Upload Photos</label>
                                 <input class="form-control" type="file" id="photos" name="photos[]" multiple>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-save card-title-icon"></i>Actions</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Create Work Task</button>
                             </div>
                         </div>
                     </div>

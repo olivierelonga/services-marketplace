@@ -89,6 +89,9 @@
 
                     {{-- Future sections: messages, requests, bookings --}}
                     <div class="text-end mt-4">
+                        @if(auth()->user()->is_provider)
+                            <a href="{{ route('provider.dashboard') }}" class="btn btn-primary btn-sm">Provider Dashboard</a>
+                        @endif
                         <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary btn-sm">Edit Profile</a>
                     </div>
                 </div>

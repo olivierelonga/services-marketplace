@@ -39,8 +39,11 @@
     <a href="{{ route('provider.dashboard') }}"><i class="fas fa-tachometer-alt card-title-icon"></i>Dashboard</a>
     <a href="{{ route('work-tasks.create') }}"><i class="fas fa-plus card-title-icon"></i>Create Job</a>
     <a href="{{ route('provider.dashboard') }}"><i class="fas fa-tasks card-title-icon"></i>My Jobs</a>
-    <a href="#"><i class="fas fa-user card-title-icon"></i>Profile</a>
-    <a href="#"><i class="fas fa-sign-out-alt card-title-icon"></i>Logout</a>
+    <a href="{{ route('dashboard') }}"><i class="fas fa-user card-title-icon"></i>Profile</a>
+    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt card-title-icon"></i>Logout</a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
 </div>
 
 <div class="main-content">
