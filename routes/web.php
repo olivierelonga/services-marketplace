@@ -84,7 +84,9 @@ Route::middleware(['auth'])->post('/fake-pay', function () {
 
 
 
-Route::get('/messages/{id}', [MessageController::class, 'show']);
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+        Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{id}', [MessageController::class, 'show']);
 
 // Show the reply form
 Route::post('/messages/{id}/reply', [MessageController::class, 'reply'])->name('messages.reply');

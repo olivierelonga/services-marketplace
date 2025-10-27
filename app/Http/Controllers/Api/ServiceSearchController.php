@@ -29,6 +29,13 @@ class ServiceSearchController extends Controller
         $experience = $request->input('experience');
         $postal = $request->input('postal_code');
 
+        # make search more flexible 
+        # remove common English suffixes like ing, er, ers, and s
+        if (!empty($query)) {
+            $query = strtolower(trim($query));
+            $query = preg_replace('/(ing|ers|er|s)$/i', '', $query);
+        }
+
         $sql = "
             SELECT 
                 users.id,
@@ -51,7 +58,7 @@ class ServiceSearchController extends Controller
                     JOIN services s ON s.id = su.service_id
                     WHERE s.name LIKE CONCAT('%', :query, '%')
                 )
-                AND (:rate1 IS NULL OR users.hourly_rate >= :rate2)
+                AND (:rate1 IS NULL OR users.hourly_rate <= :rate2)
                 AND (:experience1 IS NULL OR users.years_of_experience >= :experience2)
                 AND (:postal1 IS NULL OR users.location = :postal2)
             GROUP BY 
