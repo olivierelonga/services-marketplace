@@ -1,0 +1,204 @@
+# ============================================================
+# FILE LOCATION IN YOUR REPO: .github/workflows/deploy.yml
+#
+# WHAT THIS DOES:
+#   Triggers on every push/merge to master. Runs your tests,
+#   checks whether any database/migrations files changed, and
+#   either gates on Lloyd's approval (if yes) or queues the
+#   build automatically for the cron deployer to pick up.
+#
+# BRANCH NOTE: Your repo uses "master" not "main" — confirmed
+#   from the screenshot. All triggers below reference master.
+# ============================================================
+
+name: CI — Test, gate migrations, queue deploy
+
+# ── TRIGGER ─────────────────────────────────────────────────
+on:
+  push:
+    branches:
+      - master       # Fires whenever a branch is merged into master
+                     # or a direct push to master happens.
+                     # Feature branches do NOT trigger this —
+                     # they only trigger when they land on master.
+
+# ── JOBS ────────────────────────────────────────────────────
+# Each job runs in its own clean Ubuntu VM.
+# "needs:" creates a chain — job won't start until its
+# dependency passes. If any job fails, downstream jobs are
+# automatically cancelled.
+
+jobs:
+
+  # ════════════════════════════════════════════════════════
+  # JOB 1 — RUN TESTS
+  # This is the first gate. Nothing else runs if tests fail.
+  # ════════════════════════════════════════════════════════
+  test:
+    name: Run test suite
+    runs-on: ubuntu-latest    # Fresh Ubuntu VM, thrown away after
+
+    steps:
+      # Pull your code onto the runner VM
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Cache composer dependencies so we don't re-download
+      # them on every single run — speeds up the pipeline a lot
+      - name: Cache Composer packages
+        uses: actions/cache@v3
+        with:
+          path: vendor                    # The folder to cache
+          key: composer-${{ hashFiles('composer.lock') }}
+          # The cache key includes a hash of composer.lock.
+          # If composer.lock changes, the cache is invalidated
+          # and deps are re-downloaded fresh.
+
+      # Set up PHP — match the version your app uses
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'       # ← adjust if your app uses 8.1, 8.3 etc.
+          extensions: mbstring, pdo, pdo_mysql, tokenizer, xml, ctype, json
+
+      # Install PHP dependencies from composer.lock
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      # Copy the example env file so Laravel can boot for tests.
+      # The .env.testing file (if it exists) will override this.
+      - name: Set up .env for testing
+        run: |
+          cp .env.example .env
+          php artisan key:generate    # Generate APP_KEY required by Laravel
+
+      # Run your Laravel test suite.
+      # If you use Pest: change to "vendor/bin/pest"
+      - name: Run PHPUnit tests
+        run: vendor/bin/phpunit
+        # If you have no tests yet, this will fail.
+        # Temporarily replace with: run: echo "No tests yet — skipping"
+        # But add tests! The whole pipeline relies on this gate.
+
+  # ════════════════════════════════════════════════════════
+  # JOB 2 — CHECK FOR MIGRATION FILE CHANGES
+  # Compares the files changed in this push against the
+  # database/migrations/ path and sets an output flag.
+  # ════════════════════════════════════════════════════════
+  check-migrations:
+    name: Detect migration changes
+    runs-on: ubuntu-latest
+    needs: test          # Only runs if Job 1 (tests) passed
+
+    # "outputs" makes a variable available to ALL later jobs.
+    # Think of it as a return value from this job.
+    outputs:
+      has_migrations: ${{ steps.detect.outputs.has_migrations }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2    # IMPORTANT: we need 2 commits to be able
+                            # to diff HEAD vs HEAD~1 (current vs previous).
+                            # Default is 1 (shallow clone) which breaks git diff.
+
+      - name: Scan changed files for migrations
+        id: detect          # This id lets us write to steps.detect.outputs.*
+        run: |
+          echo "Files changed in this push:"
+          git diff --name-only HEAD~1 HEAD    # Print all changed files (for logs)
+
+          # Check specifically for anything inside database/migrations/
+          # grep -q = quiet mode, just returns exit code 0 (found) or 1 (not found)
+          if git diff --name-only HEAD~1 HEAD | grep -q "^database/migrations/"; then
+            echo "⚠️  Migration files detected in this push!"
+            echo "has_migrations=true" >> $GITHUB_OUTPUT   # Set the output flag
+          else
+            echo "✅ No migration files changed."
+            echo "has_migrations=false" >> $GITHUB_OUTPUT
+          fi
+
+  # ════════════════════════════════════════════════════════
+  # JOB 3 — MANUAL APPROVAL GATE (migrations only)
+  # This job only runs when Job 2 detected migration changes.
+  # It pauses the pipeline and waits for Lloyd to approve
+  # in the GitHub UI before anything continues.
+  # ════════════════════════════════════════════════════════
+  require-approval:
+    name: "⏸ Awaiting Lloyd's migration review"
+    runs-on: ubuntu-latest
+    needs: check-migrations
+
+    # Skip this entire job if no migrations were changed.
+    # The "==" comparison reads the output from Job 2.
+    if: needs.check-migrations.outputs.has_migrations == 'true'
+
+    # SETUP REQUIRED (one-time, in GitHub):
+    # 1. Go to your repo → Settings → Environments
+    # 2. Click "New environment" → name it: migration-approval
+    # 3. Under "Required reviewers" → add Lloyd's GitHub username
+    # 4. Save
+    #
+    # After that, GitHub will:
+    #   - Pause the pipeline at this step
+    #   - Email Lloyd with a link to review
+    #   - Only continue once he clicks "Approve" in the UI
+    environment: migration-approval
+
+    steps:
+      - name: Migration approved — continuing
+        run: echo "✅ Lloyd approved the migration. Proceeding to deploy queue."
+
+  # ════════════════════════════════════════════════════════
+  # JOB 4 — QUEUE BUILD FOR DEPLOYMENT
+  # Writes the current commit SHA to a file in the repo.
+  # The cron-deploy.yml workflow reads this file every 15
+  # minutes and deploys whatever SHA is sitting there.
+  # ════════════════════════════════════════════════════════
+  queue-deploy:
+    name: Queue build for cron deployment
+    runs-on: ubuntu-latest
+
+    # "always()" here is critical — without it, GitHub would
+    # skip this job whenever require-approval was skipped
+    # (i.e. for non-migration pushes). We want it to run in
+    # BOTH cases, so we use always() + manual conditions:
+    #
+    #   ✅ Run if: no migrations (require-approval was skipped)
+    #   ✅ Run if: migrations existed AND Lloyd approved
+    #   ❌ Skip if: tests failed
+    #   ❌ Skip if: Lloyd rejected / pipeline was cancelled
+    needs: [check-migrations, require-approval]
+    if: |
+      always() &&
+      needs.check-migrations.result == 'success' &&
+      (
+        needs.check-migrations.outputs.has_migrations == 'false' ||
+        needs.require-approval.result == 'success'
+      )
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Write deploy SHA marker
+        run: |
+          # Store the exact commit hash that passed tests + review.
+          # The cron job reads this to know which version to deploy.
+          echo "${{ github.sha }}" > .deploy-sha
+
+          # Also log each queued build for traceability
+          echo "$(date -u) | ${{ github.sha }} | ${{ github.actor }}" >> deploy-queue.log
+
+      - name: Push marker back to repo
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .deploy-sha deploy-queue.log
+
+          # [skip ci] in the commit message is a GitHub convention
+          # that tells Actions NOT to re-trigger workflows from
+          # this automated commit — prevents an infinite loop.
+          git commit -m "chore: queue build ${{ github.sha }} for deploy [skip ci]"
+          git push origin master
