@@ -1,0 +1,126 @@
+# ============================================================
+# FILE LOCATION IN YOUR REPO: .github/workflows/cron-deploy.yml
+#
+# WHAT THIS DOES:
+#   Runs every 15 minutes. Reads the .deploy-sha file that
+#   deploy.yml wrote to the repo. If a SHA is queued, deploys
+#   it to production and clears the queue. If nothing is queued,
+#   exits cleanly (no noise in the logs).
+#
+# This is intentionally a SEPARATE file from deploy.yml.
+# The two workflows are decoupled:
+#   deploy.yml  = triggered by code pushes   (event-driven)
+#   cron-deploy = triggered by the clock     (schedule-driven)
+# ============================================================
+
+name: Cron — Deploy queued build
+
+# ── TRIGGER ─────────────────────────────────────────────────
+on:
+  schedule:
+    # Cron format: minute  hour  day  month  weekday
+    #              */15    *     *    *      *
+    #
+    # */15 = "every 15 minutes" (0, 15, 30, 45 past each hour)
+    # GitHub's minimum supported interval is 5 minutes.
+    # Heads up: GitHub can delay scheduled runs by 5-15 min
+    # under load — this is normal, not a pipeline failure.
+    - cron: '*/15 * * * *'
+
+  # Adds a manual "Run workflow" button in the GitHub Actions UI.
+  # Use this to trigger an immediate deploy without waiting for
+  # the next 15-min tick — handy after a hotfix.
+  workflow_dispatch:
+
+# ── JOBS ────────────────────────────────────────────────────
+jobs:
+
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+
+    steps:
+      # Pull the repo so we can read .deploy-sha
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Read the queued SHA written by deploy.yml
+      - name: Check for queued build
+        id: read-sha
+        run: |
+          if [ ! -f .deploy-sha ]; then
+            # No file = nothing was queued since last deploy.
+            # Exit cleanly — this is not an error, just nothing to do.
+            echo "📭 No build queued. Skipping deploy."
+            echo "sha=none" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          SHA=$(cat .deploy-sha)
+
+          if [ -z "$SHA" ]; then
+            # File exists but is empty — treat as no queue
+            echo "📭 Deploy SHA file is empty. Skipping."
+            echo "sha=none" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "📦 Queued SHA found: $SHA"
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+
+      # ── THIS IS YOUR DEPLOY STEP ────────────────────────
+      # Replace the placeholder below with your actual deploy
+      # command. Options depending on your hosting setup:
+      # ────────────────────────────────────────────────────
+      - name: Deploy to production
+        if: steps.read-sha.outputs.sha != 'none'
+        env:
+          DEPLOY_SHA: ${{ steps.read-sha.outputs.sha }}
+        run: |
+          echo "🚀 Deploying $DEPLOY_SHA to production..."
+
+          # ── OPTION A: SSH deploy to a VPS (most common for Laravel) ──
+          # Uncomment and fill in your server details:
+          #
+          # ssh -o StrictHostKeyChecking=no user@YOUR_SERVER_IP \
+          #   "cd /var/www/services-marketplace && \
+          #    git pull origin master && \
+          #    composer install --no-dev --optimize-autoloader && \
+          #    php artisan migrate --force && \
+          #    php artisan config:cache && \
+          #    php artisan route:cache && \
+          #    php artisan view:cache && \
+          #    sudo systemctl reload php8.2-fpm"
+          #
+          # You'd need to add your SSH private key as a GitHub secret:
+          # Repo → Settings → Secrets → New secret → SSH_PRIVATE_KEY
+          # Then add this step before the ssh command:
+          #   - name: Set up SSH
+          #     run: |
+          #       mkdir -p ~/.ssh
+          #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          #       chmod 600 ~/.ssh/id_rsa
+
+          # ── OPTION B: Laravel Forge / Envoyer webhook ──
+          # curl -s "${{ secrets.FORGE_DEPLOY_WEBHOOK }}"
+
+          # ── OPTION C: Docker image tag + remote restart ──
+          # docker build -t ghcr.io/olivierelonga/services-marketplace:$DEPLOY_SHA .
+          # docker push ghcr.io/olivierelonga/services-marketplace:$DEPLOY_SHA
+          # ssh user@server "docker pull ... && docker compose up -d"
+
+          echo "✅ Deploy complete."    # Remove this line once you add a real command above
+
+      # After a successful deploy, remove .deploy-sha so the
+      # NEXT cron tick doesn't re-deploy the same build again.
+      - name: Clear deploy queue
+        if: steps.read-sha.outputs.sha != 'none'
+        run: |
+          rm -f .deploy-sha
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .deploy-sha
+
+          # [skip ci] prevents this commit from re-triggering deploy.yml
+          git commit -m "chore: deployed ${{ steps.read-sha.outputs.sha }} — queue cleared [skip ci]"
+          git push origin master
